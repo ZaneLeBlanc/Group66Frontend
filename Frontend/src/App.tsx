@@ -14,6 +14,7 @@ import './App.css'
 import axios from 'axios';
 import LCCDEResult from './Components/LCCDEResult.tsx'
 import PreviousRunCard from './Components/PreviousRunCard.tsx';
+import Header from './Components/Header.tsx';
 
 function App() {
   {/* React variables */}
@@ -36,13 +37,9 @@ function App() {
   {/* App itself */}
   return (
     <>
-      <header className="header">
-        <h1>ML Intrusion Detection Tool</h1>
-        <div className="items">
-          <h3>Test</h3>
-          <h3>Previous Runs</h3>
-        </div>
-      </header>
+      
+      <Header />
+      <PreviousRunCard f1={"0.98"} exTime={"0m 21s"} date={"3/18/2024 @12:04pm"} isSelected={true} model={"LCCDE"}/>
         
       <div className="testSection">
         <textarea value={pythonCode} onChange={(e) => setPythonCode(e.target.value)} />
