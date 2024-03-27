@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import './LCCDEResult.css'
+import './CSS/Result.css'
 
-function LCCDEResult() {
+function Result() {
     
     
     return (
@@ -23,4 +22,4 @@ function LCCDEResult() {
     )
 }
 
-export default LCCDEResult
+export default Result

@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import './PreviousRunCard.css'
+import './CSS/PreviousRunCard.css'
 
-function PreviousRunCard(props) {
+function PreviousRunCard(props: any) {
     {/*Props:
     isSelected: boolean   #this makes it orange or grey background
     model: string         #e.g. "LCCDE"
