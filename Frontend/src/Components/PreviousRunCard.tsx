@@ -1,6 +1,5 @@
 import './CSS/PreviousRunCard.css'
 import React from 'react';
-import axios from 'axios';
 import { useState } from 'react';
 
 function PreviousRunCard(props: any) {
@@ -14,20 +13,7 @@ function PreviousRunCard(props: any) {
 
     console.log("run_ID: " + props.run_ID + "      isSelected: " + props.isSelected);
 
-    const handleFetchRun = async (id: string) => {
-    try {
-        console.log("inside handleFetchRun");
-        props.onClick();
-        // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
-        {console.log("card is sending a response")}
-        const response = await axios.post('http://localhost:5000/fetchRun', {QueryResultWithParams: {id}});
-        
-        {/*setTreeResponse(response.data.result);*/}
-    } catch (error) {
-        console.error('Error sending response: ', error);
-    }
-    return;
-    }
+    
     
     return (
         <button className="wrapper" style={{backgroundColor: props.isSelected ? '#FFB26B' : '#D9D9D9'}} onClick={props.onClick} >

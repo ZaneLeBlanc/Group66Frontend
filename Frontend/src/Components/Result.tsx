@@ -1,6 +1,6 @@
 import './CSS/Result.css'
 
-function Result() {
+function Result(props: any) {
     
     
     return (
@@ -9,6 +9,7 @@ function Result() {
             Result
         </header>
         <div className="resultItems">
+        <p className="textItem"> ID: {props.id}</p>
 
         <p className="textItem">Execution Time: </p>
         <p className="textItem">Accuracy: </p>

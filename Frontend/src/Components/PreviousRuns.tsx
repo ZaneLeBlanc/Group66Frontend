@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Result from './Result'
 import PreviousRunCard from './PreviousRunCard'
 import './CSS/PreviousRuns.css'
+import axios from 'axios';
+
 
 function PreviousRuns() {
 
@@ -10,14 +12,17 @@ function PreviousRuns() {
         <PreviousRunCard /> components that pass in the info as props*/}
 
     const [flowStarted, setFlowStarted] = useState(false);
-
     const [selectedId, setSelectedId] = useState("-1");
+    const [previousData1, setPreviousData1] = useState({});
+    const [previousData2, setPreviousData2] = useState({});
 
     const handleSelection = (newSelectedId: any) => {
         console.log("inside handleSelection function")
+        //AXIOS CALL HERE FOR RESULT + PARAMETERS
+
         setFlowStarted(true); {/*makes the initial text go away */}
     
-        // Create a copy of the previousRunCards array
+        // Create updated Sidebar cards array
         const newArray = previousRunCards.map(item => {
             //color new
             if (item.run_ID === newSelectedId) {
@@ -30,7 +35,6 @@ function PreviousRuns() {
                 return item;
             }
             return item;
-            
         })
         
         // Update the state with the new array
@@ -41,15 +45,39 @@ function PreviousRuns() {
 
     const fetchCards = async () => {
         try {
-          // Perform your fetch request here
-          const response = await fetch('http://localhost:5000/CardsData');
+          const response = await fetch('http://localhost:5000/fetchCardsData');
           const data = await response.json();
-          // Assuming your data is an array of cards
+          // data should be an array of cards:
+          /*
+          
+           [{ 
+                isSelected: false, 
+                model: "LCCDE", 
+                f1: "0.99", 
+                run_ID: "2891", 
+                date: "3/18/2024 @12:04pm" 
+            }]
+
+          */
           setPreviousRunCards(data);
         } catch (error) {
           console.error('Error fetching card data:', error);
         }
       };
+
+      const fetchRun = async (id: string) => {
+        try {
+            console.log("inside fetchRun");
+            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
+            {console.log("card is sending a response")}
+            const response = await axios.post('http://localhost:5000/fetchRun', {QueryResultWithParams: {id}});
+            //I need all the parameter values and result of run
+            setPreviousData1(response.data);
+        } catch (error) {
+            console.error('Error fetching run: ', error);
+        }
+        return;
+        }
 
     const [previousRunCards, setPreviousRunCards] = useState([
     //placeholder data until we can get the request working
@@ -74,7 +102,6 @@ function PreviousRuns() {
         run_ID: "0002", 
         date: "3/16/2024 @12:02pm" 
     }
-    // Add more cards as needed
     ]);
 
 
@@ -99,7 +126,9 @@ function PreviousRuns() {
             <div className="page">
 
             {flowStarted ? (
-                <Result /> // placeholder, here we will render a specific run's parameters and result as well as a re-run button
+                // placeholder, here we will render a specific run's parameters and result as well as a re-run button
+                //<LCCDEParams props={} />
+                <Result id={selectedId}/> 
             ) : (
                 <h3>Select a record to view details</h3>
             )}
