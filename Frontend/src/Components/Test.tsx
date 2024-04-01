@@ -15,8 +15,7 @@ function Test() {
 
     const sendLCCDEParams = async () => {
         try {
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
-            const response = await axios.post('http://localhost:5000/runLccde', {code: lccdeRequest});
+            const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
 
             setLccdeResponse(response.data.result);
         } catch (error) {
@@ -26,8 +25,7 @@ function Test() {
 
     const sendMTHParams = async () => {
         try {
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
-            const response = await axios.post('http://localhost:5000/runMth', {code: mthRequest});
+            const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
 
             setMthResponse(response.data.result);
         } catch (error) {
@@ -37,8 +35,7 @@ function Test() {
 
     const sendTreeParams = async () => {
         try {
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
-            const response = await axios.post('http://localhost:5000/runTree', {code: treeRequest});
+            const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
             setTreeResponse(response.data.result);
         } catch (error) {
