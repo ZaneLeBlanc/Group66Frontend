@@ -1,6 +1,4 @@
 import './CSS/PreviousRunCard.css'
-import React from 'react';
-import { useState } from 'react';
 
 function PreviousRunCard(props: any) {
     {/*Props:

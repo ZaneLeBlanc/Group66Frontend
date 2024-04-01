@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import Result from './Result'
+// Author: zleblanc
+
+import { useState, useEffect } from 'react';
+//import Result from './Result'
 import PreviousRunCard from './PreviousRunCard'
 import './CSS/PreviousRuns.css'
 import axios from 'axios';
@@ -7,20 +9,13 @@ import axios from 'axios';
 
 function PreviousRuns() {
 
-    {/* Goal here is to collect an array of card info from python,
-        and then with that array we will create another array of 
-        <PreviousRunCard /> components that pass in the info as props*/}
-
     const [flowStarted, setFlowStarted] = useState(false);
     const [selectedId, setSelectedId] = useState("-1");
-    const [previousData1, setPreviousData1] = useState({});
-    const [previousData2, setPreviousData2] = useState({});
+    const [runsData, setRunsData] = useState<any[]>([]);
 
     const handleSelection = (newSelectedId: any) => {
-        console.log("inside handleSelection function")
-        //AXIOS CALL HERE FOR RESULT + PARAMETERS
-
-        setFlowStarted(true); {/*makes the initial text go away */}
+        //make the initial text go away
+        setFlowStarted(true); 
     
         // Create updated Sidebar cards array
         const newArray = previousRunCards.map(item => {
@@ -42,45 +37,57 @@ function PreviousRuns() {
         setPreviousRunCards(newArray);
     };
 
-
-    const fetchCards = async () => {
+    // Retrieve all previous runs data
+    //use effect makes this only run once
+    useEffect(() => {
+    const fetchData = async () => {
+        // collect the data and store as an array in React state variable
         try {
-          const response = await fetch('http://localhost:5000/fetchCardsData');
-          const data = await response.json();
-          // data should be an array of cards:
-          /*
-          
-           [{ 
-                isSelected: false, 
-                model: "LCCDE", 
-                f1: "0.99", 
-                run_ID: "2891", 
-                date: "3/18/2024 @12:04pm" 
-            }]
+          const response = await axios.post('http://localhost:5000/retrievelccde');
+        let data = JSON.parse(response.data); 
+        setRunsData(data.rows);
 
-          */
-          setPreviousRunCards(data);
+        //this maps each item in the data array, to be a summary card for the sidebar array. lots of ugly typescript in the top
+        const formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
+            isSelected: false,
+            model: "LCCDE", //need to be able to detect MTH and Tree in future
+
+            f1: row.f1.toFixed(5),
+            run_ID: row.id.toString(),
+            date: new Date(row.run_date).toLocaleString()
+            }));
+    
+            //array is created, put it in the sidebar varaible array
+            setPreviousRunCards(formattedData);
+            
         } catch (error) {
           console.error('Error fetching card data:', error);
         }
       };
 
-      const fetchRun = async (id: string) => {
-        try {
-            console.log("inside fetchRun");
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
-            {console.log("card is sending a response")}
-            const response = await axios.post('http://localhost:5000/fetchRun', {QueryResultWithParams: {id}});
-            //I need all the parameter values and result of run
-            setPreviousData1(response.data);
-        } catch (error) {
-            console.error('Error fetching run: ', error);
-        }
-        return;
-        }
+      fetchData();
+
+    }, []);
+
+    // given an id's run, this function returns the JSON object from the initial data retrieval.
+    // in the future we would want to just parse the data here to pass it to a component as props
+    // I'm pretty sure this is not how to properly make a function, I think I need to use the const thing
+    function retrieveDataWithId(run_id: any) {
+        //find the object in the array with the correct ID
+        for(var i = 0; i < runsData.length; i++)
+            {
+            if(runsData[i].id.toString() === run_id)
+            {
+                var theString = JSON.stringify(runsData[i]);
+                //console.log("retrieve: " + theString);
+                return theString;
+            }
+            }
+    }
+
 
     const [previousRunCards, setPreviousRunCards] = useState([
-    //placeholder data until we can get the request working
+    //placeholder data if the fetch request fails
     { 
         isSelected: false, 
         model: "LCCDE", 
@@ -103,6 +110,8 @@ function PreviousRuns() {
         date: "3/16/2024 @12:02pm" 
     }
     ]);
+
+
 
 
     return (
@@ -128,7 +137,8 @@ function PreviousRuns() {
             {flowStarted ? (
                 // placeholder, here we will render a specific run's parameters and result as well as a re-run button
                 //<LCCDEParams props={} />
-                <Result id={selectedId}/> 
+                //<Result id={selectedId}/> 
+                <p style={{padding: "100px"}}>{retrieveDataWithId(selectedId)}</p>
             ) : (
                 <h3>Select a record to view details</h3>
             )}
