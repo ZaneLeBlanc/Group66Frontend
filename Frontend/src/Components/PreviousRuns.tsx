@@ -13,12 +13,45 @@ function PreviousRuns() {
     const [selectedId, setSelectedId] = useState("-1");
     const [runsData, setRunsData] = useState<any[]>([]);
 
+    const [filterDate, setFilterDate] = useState<any>();
+    const [filterF1, setFilterF1] = useState<any>();
+    const [filterID, setFilterID] = useState<any>();
+    const [filterModel, setFilterModel] = useState<any>();
+
+    
+    const [previousRunCards, setPreviousRunCards] = useState([
+        //placeholder data if the fetch request fails
+        { 
+            isSelected: false, 
+            model: "LCCDE", 
+            f1: "0.99", 
+            run_ID: "2891", 
+            date: "3/18/2024 @12:04pm" 
+        },
+        { 
+            isSelected: false, 
+            model: "MTH", 
+            f1: "0.91", 
+            run_ID: "0001", 
+            date: "3/17/2024 @12:02pm" 
+        },
+        { 
+            isSelected: false, 
+            model: "Tree-Based", 
+            f1: "0.92", 
+            run_ID: "0002", 
+            date: "3/16/2024 @12:02pm" 
+        }
+        ]);
+    const [filteredPreviousRunCards, setFilteredPreviousRunCards] = useState([previousRunCards]);
+
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
         setFlowStarted(true); 
     
         // Create updated Sidebar cards array
-        const newArray = previousRunCards.map(item => {
+        var newNewArray = [];
+        const newArray = filteredPreviousRunCards[0].map(item => {
             //color new
             if (item.run_ID === newSelectedId) {
                 item.isSelected = true;
@@ -31,10 +64,12 @@ function PreviousRuns() {
             }
             return item;
         })
+        newNewArray.push(newArray);
         
         // Update the state with the new array
         setSelectedId(newSelectedId); 
-        setPreviousRunCards(newArray);
+        setFilteredPreviousRunCards(newNewArray);
+        console.log("previousRunCards: " + previousRunCards);
     };
 
     // Retrieve all previous runs data
@@ -59,6 +94,9 @@ function PreviousRuns() {
     
             //array is created, put it in the sidebar varaible array
             setPreviousRunCards(formattedData);
+            var tempArray = [];
+            tempArray.push(previousRunCards);
+            setFilteredPreviousRunCards(tempArray);
             
         } catch (error) {
           console.error('Error fetching card data:', error);
@@ -68,6 +106,8 @@ function PreviousRuns() {
       fetchData();
 
     }, []);
+    
+    useEffect(() => {}, [previousRunCards])
 
     // given an id's run, this function returns the JSON object from the initial data retrieval.
     // in the future we would want to just parse the data here to pass it to a component as props
@@ -85,40 +125,61 @@ function PreviousRuns() {
             }
     }
 
+    //
+    const handleFilter = () => {
+        //handle subset the array
+        console.log("filterDate: " + filterDate);
+        console.log("filterF1: " + filterF1);
+        console.log("filterID: " + filterID);
+        console.log("filterModel: " + filterModel);
 
-    const [previousRunCards, setPreviousRunCards] = useState([
-    //placeholder data if the fetch request fails
-    { 
-        isSelected: false, 
-        model: "LCCDE", 
-        f1: "0.99", 
-        run_ID: "2891", 
-        date: "3/18/2024 @12:04pm" 
-    },
-    { 
-        isSelected: false, 
-        model: "MTH", 
-        f1: "0.91", 
-        run_ID: "0001", 
-        date: "3/17/2024 @12:02pm" 
-    },
-    { 
-        isSelected: false, 
-        model: "Tree-Based", 
-        f1: "0.92", 
-        run_ID: "0002", 
-        date: "3/16/2024 @12:02pm" 
+        let newSubArray = []
+        let newArray = [];
+        if(filterID == undefined){
+            console.log("returning");
+            return;
+        }
+        for (var i = 0; i < previousRunCards.length; i++)
+        {
+            if(previousRunCards[i].run_ID == filterID)
+            {
+                newSubArray.push(previousRunCards[i])
+            }
+        }
+        newArray.push(newSubArray)
+        console.log("newArray: " + newArray);
+        setFilteredPreviousRunCards(newArray);
     }
-    ]);
-
-
 
 
     return (
         <div className="container">
             <div className="sidebar">
+                <div className="filterContainer">
+                    <h2>Filter</h2>
+                    <label htmlFor="date">Date:</label>
+                    <input type="date" id="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
+
+                    <label htmlFor="score">F1 (greater than): {filterF1}</label>
+                    <input type="range" id="score" min="0" max="1" step="0.01" value={filterF1} onChange={(e) => setFilterF1(e.target.value)} />
+
+                    <label htmlFor="id">ID:</label>
+                    <input type="text" id="id" value={filterID} onChange={(e) => setFilterID(e.target.value)} placeholder="Search by ID" />
+
+                    <label htmlFor="model-type">Model Type:</label>
+                    <select id="model-type" value={filterModel} onChange={(e) => setFilterModel(e.target.value)}>
+                        <option value="">any</option>
+                        <option value="LCCDE">LCCDE</option>
+                        <option value="MTH">MTH</option>
+                        <option value="Tree-Based">Tree-Based</option>
+                    </select>
+
+                    <button onClick={handleFilter}>Apply Filter</button>
+                </div>
+
                 {/* Map over the array of PreviousRunCard data and render each card */}
-                {previousRunCards.map((card, index) => (
+                
+                {filteredPreviousRunCards[0].map((card, index) => (
                     <PreviousRunCard 
                         key={index}
                         isSelected={card.isSelected} 
