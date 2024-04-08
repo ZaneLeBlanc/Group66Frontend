@@ -1,6 +1,5 @@
-import React from 'react';
-import { useState } from "react"
-import axios from 'axios';
+import {useState} from 'react'
+import axios from 'axios'
 
 function PageLCCDE() {
     const[lccdeRequest, setLccdeRequest] = useState('');
@@ -8,7 +7,6 @@ function PageLCCDE() {
 
     const sendLCCDEParams = async () => {
         try {
-            
             const response = await axios.post('http://localhost:5000/runlccde', {
                 "model_req": {
                   "dataset_name": "",
@@ -41,6 +39,7 @@ function PageLCCDE() {
     }
 
     return(
+        // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div>
             <h1>RUN LCCDE</h1>
             <div className="testSection">
