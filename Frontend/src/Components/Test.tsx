@@ -2,6 +2,10 @@ import { useState } from "react"
 // not sure if I want to put my styling in App.css or index.css @ZaneLeBlanc what do
 import './CSS/App.css'
 import axios from 'axios'
+import Sidebar from "./Sidebar";
+import PageLCCDE from "./ModelPages/PageLCCDE";
+import PageMTH from "./ModelPages/PageMTH";
+import PageTree from "./ModelPages/PageTree";
 
 function Test() {
 
@@ -12,6 +16,21 @@ function Test() {
     const [treeRequest, setTreeRequest] = useState('and everywhere');
     const [treeResponse, setTreeResponse] = useState('');
 
+    const[currentPage, setCurrentPage] = useState('page1');
+
+    // controls which page to render (one per model)
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'page1':
+                return <PageLCCDE />;
+            case 'page2':
+                return <PageMTH />;
+            case 'page3':
+                return <PageTree />;
+            default:
+                return null;
+        }
+    };
 
     const sendLCCDEParams = async () => {
         try {
@@ -71,29 +90,33 @@ function Test() {
         // TODO: 1 split up params into individual entries (buttons, dropdowns, etc.)
         // TODO: 2 split these up into pages
         // for now, the user will enter comma delimited parameters and hit send per model
-        <>
-            <h1>TEST PAGE</h1>
-            <div className="testSection">
-                <textarea value={lccdeRequest} onChange={(e) =>
-                setLccdeRequest(e.target.value)}/>
-                <button className="runbt" onClick={sendLCCDEParams}>Run LCCDE</button>
-            </div>
-            <div>Result: {lccdeResponse}</div>
+        <div>
+            <Sidebar setPage={setCurrentPage} />
+            <div>{renderPage()}</div>
+        </div>
+        // <>
+        //     <h1>TEST PAGE</h1>
+        //     <div className="testSection">
+        //         <textarea value={lccdeRequest} onChange={(e) =>
+        //         setLccdeRequest(e.target.value)}/>
+        //         <button className="runbt" onClick={sendLCCDEParams}>Run LCCDE</button>
+        //     </div>
+        //     <div>Result: {lccdeResponse}</div>
 
-            <div className="testSection">
-                <textarea value={mthRequest} onChange={(e) =>
-                setMthRequest(e.target.value)}/>
-                <button className="runbt" onClick={sendMTHParams}>Run MTH</button>
-            </div>
-            <div>Result: {mthResponse}</div>
+        //     <div className="testSection">
+        //         <textarea value={mthRequest} onChange={(e) =>
+        //         setMthRequest(e.target.value)}/>
+        //         <button className="runbt" onClick={sendMTHParams}>Run MTH</button>
+        //     </div>
+        //     <div>Result: {mthResponse}</div>
             
-            <div className="testSection">
-                <textarea value={treeRequest} onChange={(e) =>
-                setTreeRequest(e.target.value)}/>
-                <button className="runbt" onClick={sendTreeParams}>Run Tree-Based</button>
-            </div>
-            <div>Result: {treeResponse}</div>
-        </>
+        //     <div className="testSection">
+        //         <textarea value={treeRequest} onChange={(e) =>
+        //         setTreeRequest(e.target.value)}/>
+        //         <button className="runbt" onClick={sendTreeParams}>Run Tree-Based</button>
+        //     </div>
+        //     <div>Result: {treeResponse}</div>
+        // </>
     )
 }
 
