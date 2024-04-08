@@ -5,7 +5,7 @@
 click on the localhost link and it will open up in browser*/}
 
 import './Components/CSS/App.css'
-import {Link, Route, BrowserRouter, Routes} from 'react-router-dom';
+import {Link, Route, BrowserRouter, Routes, Navigate} from 'react-router-dom';
 import Test from './Components/Test.tsx';
 import PreviousRuns from './Components/PreviousRuns.tsx';
 
@@ -23,6 +23,7 @@ function App() {
         </header>
 
         <Routes>
+          <Route path="/" element={<Navigate to="/Test" />} /> {/* Default -> auto redirects to Test page*/}
           <Route path="/Test" element={<Test />} />
           <Route path="/PreviousRuns" element={<PreviousRuns />} />
         </Routes>
