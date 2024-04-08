@@ -16,28 +16,7 @@ function Test() {
     const sendLCCDEParams = async () => {
         try {
             
-            const response = await axios.post('http://localhost:5000/runlccde', {
-                "model_req": {
-                  "dataset_name": "",
-                  "XGB": {
-                    "n_estimators": "",
-                    "max_depth": "",
-                    "learning_rate": ""
-                  },
-                  "LightGBM": {
-                    "num_iterations": "",
-                    "max_depth": "",
-                    "learning_rate": "",
-                    "num_leaves": "",
-                    "boosting_type": ""
-                  },
-                  "CatBoost": {
-                    "n_estimators": "",
-                    "max_depth": "",
-                    "learning_rate": ""
-                  }
-                }
-              });
+            const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
 
             setLccdeResponse(response.data);
             console.log("setLCCDE");
@@ -49,9 +28,9 @@ function Test() {
 
     const sendMTHParams = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/runMth', {code: mthRequest});
+            const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
 
-            setMthResponse(response.data.result);
+            setMthResponse(response.data);
         } catch (error) {
             console.error('Error sending response: ', error);
         }
@@ -59,9 +38,9 @@ function Test() {
 
     const sendTreeParams = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/runTree', {code: treeRequest});
+            const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
-            setTreeResponse(response.data.result);
+            setTreeResponse(response.data);
         } catch (error) {
             console.error('Error sending response: ', error);
         }
