@@ -5,7 +5,6 @@ import axios from 'axios'
 
 function Test() {
 
-    // TODO: can we use one set of requests and responses? or does each model have unique req/res
     const [lccdeRequest, setLccdeRequest] = useState('put some params here');
     const [lccdeResponse, setLccdeResponse] = useState('');
     const [mthRequest, setMthRequest] = useState('and here');
@@ -13,9 +12,9 @@ function Test() {
     const [treeRequest, setTreeRequest] = useState('and everywhere');
     const [treeResponse, setTreeResponse] = useState('');
 
+
     const sendLCCDEParams = async () => {
         try {
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
             
             const response = await axios.post('http://localhost:5000/runlccde', {
                 "model_req": {
@@ -50,7 +49,6 @@ function Test() {
 
     const sendMTHParams = async () => {
         try {
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
             const response = await axios.post('http://localhost:5000/runMth', {code: mthRequest});
 
             setMthResponse(response.data.result);
@@ -61,7 +59,6 @@ function Test() {
 
     const sendTreeParams = async () => {
         try {
-            // TODO: figure out from @mlandauro what endpoint to use, and what format to pass request in
             const response = await axios.post('http://localhost:5000/runTree', {code: treeRequest});
 
             setTreeResponse(response.data.result);
