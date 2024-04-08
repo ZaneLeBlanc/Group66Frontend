@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import PreviousRunCard from './PreviousRunCard'
 import './CSS/PreviousRuns.css'
 import axios from 'axios';
+import moment from 'moment';
 
 
 function PreviousRuns() {
@@ -19,7 +20,7 @@ function PreviousRuns() {
     const [filterModel, setFilterModel] = useState<any>();
 
     
-    const [previousRunCards, setPreviousRunCards] = useState([
+    const [previousRunCards, setPreviousRunCards] = useState<any[]>([
         //placeholder data if the fetch request fails
         { 
             isSelected: false, 
@@ -27,23 +28,11 @@ function PreviousRuns() {
             f1: "0.99", 
             run_ID: "2891", 
             date: "3/18/2024 @12:04pm" 
-        },
-        { 
-            isSelected: false, 
-            model: "MTH", 
-            f1: "0.91", 
-            run_ID: "0001", 
-            date: "3/17/2024 @12:02pm" 
-        },
-        { 
-            isSelected: false, 
-            model: "Tree-Based", 
-            f1: "0.92", 
-            run_ID: "0002", 
-            date: "3/16/2024 @12:02pm" 
         }
-        ]);
-    const [filteredPreviousRunCards, setFilteredPreviousRunCards] = useState([previousRunCards]);
+        
+    
+    ]);
+    const [filteredPreviousRunCards, setFilteredPreviousRunCards] = useState<any[]>([]);
 
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
@@ -51,7 +40,7 @@ function PreviousRuns() {
     
         // Create updated Sidebar cards array
         var newNewArray = [];
-        const newArray = filteredPreviousRunCards[0].map(item => {
+        const newArray = filteredPreviousRunCards[0].map((item: { run_ID: string; isSelected: boolean; }) => {
             //color new
             if (item.run_ID === newSelectedId) {
                 item.isSelected = true;
@@ -69,7 +58,6 @@ function PreviousRuns() {
         // Update the state with the new array
         setSelectedId(newSelectedId); 
         setFilteredPreviousRunCards(newNewArray);
-        console.log("previousRunCards: " + previousRunCards);
     };
 
     // Retrieve all previous runs data
@@ -86,7 +74,6 @@ function PreviousRuns() {
         const formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
             isSelected: false,
             model: "LCCDE", //need to be able to detect MTH and Tree in future
-
             f1: row.f1.toFixed(5),
             run_ID: row.id.toString(),
             date: new Date(row.run_date).toLocaleString()
@@ -95,7 +82,7 @@ function PreviousRuns() {
             //array is created, put it in the sidebar varaible array
             setPreviousRunCards(formattedData);
             var tempArray = [];
-            tempArray.push(previousRunCards);
+            tempArray.push(formattedData);
             setFilteredPreviousRunCards(tempArray);
             
         } catch (error) {
@@ -106,8 +93,6 @@ function PreviousRuns() {
       fetchData();
 
     }, []);
-    
-    useEffect(() => {}, [previousRunCards])
 
     // given an id's run, this function returns the JSON object from the initial data retrieval.
     // in the future we would want to just parse the data here to pass it to a component as props
@@ -116,41 +101,116 @@ function PreviousRuns() {
         //find the object in the array with the correct ID
         for(var i = 0; i < runsData.length; i++)
             {
-            if(runsData[i].id.toString() === run_id)
-            {
-                var theString = JSON.stringify(runsData[i]);
-                //console.log("retrieve: " + theString);
-                return theString;
-            }
+                if(runsData[i].id.toString() === run_id)
+                {
+                    var theString = JSON.stringify(runsData[i]);
+                    //console.log("retrieve: " + theString);
+                    return theString;
+                }
             }
     }
 
-    //
+    //Runs handle filter whenever a change is made to any of the filter variables
+    useEffect(() => {
+        handleFilter();
+    }, [filterDate, filterID, filterModel, filterF1])
+
+    //sets all the filter values to their defaults
+    const clearFilters = () => {
+        setFilterDate(undefined);
+        setFilterF1(0);
+        setFilterID("");
+        setFilterModel("any");
+    }
+
+
     const handleFilter = () => {
-        //handle subset the array
-        console.log("filterDate: " + filterDate);
-        console.log("filterF1: " + filterF1);
-        console.log("filterID: " + filterID);
-        console.log("filterModel: " + filterModel);
+        let newSubArray = [] //array to hold items that pass the filter
+        let newArray = []; //Temporary fix for array issues: we place the newSubArray within this array at the end
 
-        let newSubArray = []
-        let newArray = [];
-        if(filterID == undefined){
-            console.log("returning");
-            return;
+        //handle ID
+        if(filterID == undefined || filterID == ""){
+            for (var i = 0; i < previousRunCards.length; i++)
+                {
+                    newSubArray.push(previousRunCards[i])
+                }
         }
-        for (var i = 0; i < previousRunCards.length; i++)
+        else{
+            for (var i = 0; i < previousRunCards.length; i++)
+                {
+                    if(previousRunCards[i].run_ID == filterID)
+                    {
+                        newSubArray.push(previousRunCards[i])
+                    }
+                }
+        }
+
+        //handle model
+        
+        if (filterModel == undefined || filterModel == "any")
         {
-            if(previousRunCards[i].run_ID == filterID)
+        }
+        else if (filterModel == "LCCDE") {
+            for (var i = 0; i < newSubArray.length; i++)
+                {
+                    const elementModel: any = newSubArray[i].model;
+                    if (elementModel != "LCCDE")
+                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
+                }
+        }
+        else if (filterModel == "MTH") {
+            for (var i = 0; i < newSubArray.length; i++)
+                {
+                    const elementModel = newSubArray[i].model;
+                    if (elementModel != "MTH")
+                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
+                }
+        }
+        else if (filterModel == "Tree-Based") {
+            for (var i = 0; i < newSubArray.length; i++)
+                {
+                    const elementModel = newSubArray[i].model;
+                    if (elementModel != "Tree-Based")
+                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
+                }
+        }
+
+        //handle F1
+        if (filterF1 != undefined)
+        {
+            //check each item, remove it it isn't equal to or above
+            for (var i = 0; i < newSubArray.length; i++)
             {
-                newSubArray.push(previousRunCards[i])
+
+                if (newSubArray[i].f1 < filterF1)
+                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
             }
         }
-        newArray.push(newSubArray)
-        console.log("newArray: " + newArray);
-        setFilteredPreviousRunCards(newArray);
-    }
 
+        //handle Date
+        if (!(filterDate == undefined || filterDate == ""))
+        {
+            //check each item, remove it it isn't target date
+            for (var i = 0; i < newSubArray.length; i++)
+            {
+                const parsedDate = moment(newSubArray[i].date, "M-DD-YYYY", false);
+                if (parsedDate.format("YYYY-MM-DD") != filterDate)
+                    {
+                        newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
+                    }
+            }
+        }
+        
+        newArray.push(newSubArray)
+
+        //check for valid array: in order to fix weird single empty item issue
+        if (newArray[0][0].model == "LCCDE" || newArray[0][0].model == "MTH" || newArray[0][0].model == "Tree-Based") {
+            setFilteredPreviousRunCards(newArray);
+        }
+        else {
+            setFilteredPreviousRunCards([]);
+        }
+    }
 
     return (
         <div className="container">
@@ -161,7 +221,7 @@ function PreviousRuns() {
                     <input type="date" id="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
 
                     <label htmlFor="score">F1 (greater than): {filterF1}</label>
-                    <input type="range" id="score" min="0" max="1" step="0.01" value={filterF1} onChange={(e) => setFilterF1(e.target.value)} />
+                    <input type="range" id="score" min="0" max="1" step="0.001" value={filterF1} onChange={(e) => setFilterF1(e.target.value)} />
 
                     <label htmlFor="id">ID:</label>
                     <input type="text" id="id" value={filterID} onChange={(e) => setFilterID(e.target.value)} placeholder="Search by ID" />
@@ -173,13 +233,13 @@ function PreviousRuns() {
                         <option value="MTH">MTH</option>
                         <option value="Tree-Based">Tree-Based</option>
                     </select>
-
-                    <button onClick={handleFilter}>Apply Filter</button>
+                    <button onClick={clearFilters}>Clear Filters</button>
                 </div>
 
                 {/* Map over the array of PreviousRunCard data and render each card */}
-                
-                {filteredPreviousRunCards[0].map((card, index) => (
+                {filteredPreviousRunCards.length > 0 ? 
+                (<ul>
+                    {filteredPreviousRunCards[0].map((card: { isSelected: any; model: any; f1: any; run_ID: any; date: any; }, index: any) => (
                     <PreviousRunCard 
                         key={index}
                         isSelected={card.isSelected} 
@@ -190,9 +250,11 @@ function PreviousRuns() {
                         // Pass a callback function with the index to handleSelection
                         onClick={() => handleSelection(card.run_ID)}
                     />
-                ))}
-            </div>
+                    ))}
 
+                </ul>) 
+                : (<h3>no records</h3>)}
+            </div>
             <div className="page">
 
             {flowStarted ? (
@@ -203,7 +265,6 @@ function PreviousRuns() {
             ) : (
                 <h3>Select a record to view details</h3>
             )}
-                
             </div>
         </div>
     )
