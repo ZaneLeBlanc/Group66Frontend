@@ -1,6 +1,4 @@
 import './CSS/PreviousRunCard.css'
-import React from 'react';
-import { useState } from 'react';
 
 function PreviousRunCard(props: any) {
     {/*Props:
@@ -11,10 +9,6 @@ function PreviousRunCard(props: any) {
     date: string          #e.g. "3/18/2024 @12:04pm"
     */}
 
-    console.log("run_ID: " + props.run_ID + "      isSelected: " + props.isSelected);
-
-    
-    
     return (
         <button className="wrapper" style={{backgroundColor: props.isSelected ? '#FFB26B' : '#D9D9D9'}} onClick={props.onClick} >
             <div className="top-section">

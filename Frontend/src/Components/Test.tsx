@@ -15,9 +15,33 @@ function Test() {
 
     const sendLCCDEParams = async () => {
         try {
-            const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
+            
+            const response = await axios.put('http://localhost:5000/runlccde', {
+                "model_req": {
+                  "dataset_name": "",
+                  "XGB": {
+                    "n_estimators": "",
+                    "max_depth": "",
+                    "learning_rate": ""
+                  },
+                  "LightGBM": {
+                    "num_iterations": "",
+                    "max_depth": "",
+                    "learning_rate": "",
+                    "num_leaves": "",
+                    "boosting_type": ""
+                  },
+                  "CatBoost": {
+                    "n_estimators": "",
+                    "max_depth": "",
+                    "learning_rate": ""
+                  }
+                }
+              });
 
-            setLccdeResponse(response.data.result);
+            setLccdeResponse(response.data);
+            console.log("setLCCDE");
+            console.log(response);
         } catch (error) {
             console.error('Error sending response: ', error);
         }
@@ -55,12 +79,14 @@ function Test() {
                 <button className="runbt" onClick={sendLCCDEParams}>Run LCCDE</button>
             </div>
             <div>Result: {lccdeResponse}</div>
+
             <div className="testSection">
                 <textarea value={mthRequest} onChange={(e) =>
                 setMthRequest(e.target.value)}/>
                 <button className="runbt" onClick={sendMTHParams}>Run MTH</button>
             </div>
             <div>Result: {mthResponse}</div>
+            
             <div className="testSection">
                 <textarea value={treeRequest} onChange={(e) =>
                 setTreeRequest(e.target.value)}/>
