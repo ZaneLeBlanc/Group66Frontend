@@ -7,28 +7,7 @@ function PageLCCDE() {
 
     const sendLCCDEParams = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/runlccde', {
-                "model_req": {
-                  "dataset_name": "",
-                  "XGB": {
-                    "n_estimators": "",
-                    "max_depth": "",
-                    "learning_rate": ""
-                  },
-                  "LightGBM": {
-                    "num_iterations": "",
-                    "max_depth": "",
-                    "learning_rate": "",
-                    "num_leaves": "",
-                    "boosting_type": ""
-                  },
-                  "CatBoost": {
-                    "n_estimators": "",
-                    "max_depth": "",
-                    "learning_rate": ""
-                  }
-                }
-              });
+            const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
 
             setLccdeResponse(response.data);
             console.log("setLCCDE");

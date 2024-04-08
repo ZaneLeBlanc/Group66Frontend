@@ -7,9 +7,9 @@ function PageMTH() {
 
     const sendMTHParams = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/runMth', {code: mthRequest});
+            const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
 
-            setMthResponse(response.data.result);
+            setMthResponse(response.data);
         } catch (error) {
             console.error('Error sending response: ', error);
         }

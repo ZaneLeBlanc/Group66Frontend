@@ -7,9 +7,9 @@ function PageTree() {
 
     const sendTreeParams = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/runTree', {code: treeRequest});
+            const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
-            setTreeResponse(response.data.result);
+            setTreeResponse(response.data);
         } catch (error) {
             console.error('Error sending response: ', error);
         }
