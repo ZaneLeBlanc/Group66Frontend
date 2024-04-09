@@ -1,12 +1,17 @@
 import {useState} from 'react'
 import axios from 'axios'
 
-function PageTree() {
+function PageTree(props : any) {
+    /*Props:
+    dataset: int # which dataset user selected
+    */
+    // usage -> props.dataset
     const [treeRequest, setTreeRequest] = useState('and everywhere');
     const [treeResponse, setTreeResponse] = useState('');
 
     const sendTreeParams = async () => {
         try {
+            const data = props.dataset;
             const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
             setTreeResponse(response.data);
