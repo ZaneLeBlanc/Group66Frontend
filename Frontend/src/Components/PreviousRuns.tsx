@@ -66,7 +66,7 @@ function PreviousRuns() {
     const fetchData = async () => {
         // collect the data and store as an array in React state variable
         try {
-          const response = await axios.post('http://localhost:5000/retrievelccde');
+          const response = await axios.get('http://localhost:5000/retrieveLccde');
         let data = JSON.parse(response.data); 
         setRunsData(data.rows);
 
