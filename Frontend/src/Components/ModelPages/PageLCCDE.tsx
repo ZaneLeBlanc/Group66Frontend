@@ -31,8 +31,7 @@ function PageLCCDE(props : any) {
     const generateJSON = () => {
         return JSON.stringify({
             model_req: {
-                //dataset_name: props.dataset, temp until the right thing can be sent
-                dataset_path: "CICIDS2017_sample_km.csv",
+                dataset_path: props.dataset,
                 XGB: {
                     n_estimators: nEstimators,
                     max_depth: maxDepth,
