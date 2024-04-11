@@ -5,7 +5,7 @@
   
 .sidebar {
     display: flex;
-    width: 25%;
+    /* width: 25%; */
     flex-direction: column;
 }
 
@@ -16,18 +16,39 @@
 }
 
 .sidebar button {
-    display: block;
     width: 70%;
     padding: 20px;
     margin-bottom: 20px;
-    margin-left: auto;
-    border-radius: 0;
+    margin-left: auto; /* shifts button right */
+    border-radius: 0; /* makes square not rounded */
 
     text-align: right;
     font-weight: bold;
+    font-size: x-large;
 
     background-color: #FFB26B;
 }
+
+.datasetSelection {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-top: 50%;
+    margin-bottom: auto;
+    text-align: right;
+}
+
+.sidebar input[type="radio"] {
+    margin-right: 5px;
+}
+
+.longLine {
+    height: 3px; /* Line height */
+    width: 80%; /* Line width */
+    background-color: black; /* Color of the line */
+    margin-left: auto; /* Shift right */
+    margin-bottom: 10px; /* Spacing between the line and radio buttons */
+  }
   
 .emptyDiv {
     flex: 1; /* Empty div fills the remaining space */
