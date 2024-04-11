@@ -1,20 +1,34 @@
 /* Test.css */
 .container {
     display: flex; /* Use flexbox for layout */
-  }
+}
   
-  .sidebar {
-    width: 25%; /* Sidebar takes up 25% of the container */
+.sidebar {
+    display: flex;
+    width: 25%;
     flex-direction: column;
-    background-color: #f0f0f0; /* Example background color */
-  }
-  
-  .modelPage {
+}
+
+.modelPage {
     flex: 0 0 33.33%; /* Model page takes up one-third of the container horizontally */
-    padding: 20px; /* Example padding */
+    padding: 2em; /* Example padding */
     background-color: #e0e0e0; /* Example background color */
-  }
+}
+
+.sidebar button {
+    display: block;
+    width: 70%;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    border-radius: 0;
+
+    text-align: right;
+    font-weight: bold;
+
+    background-color: #FFB26B;
+}
   
-  .emptyDiv {
+.emptyDiv {
     flex: 1; /* Empty div fills the remaining space */
-  }
+}

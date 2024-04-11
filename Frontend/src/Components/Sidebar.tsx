@@ -1,3 +1,4 @@
+import './CSS/Test.css'
 
 // sidebar menu for selecting a model and data set
 const Sidebar = ({
@@ -8,10 +9,10 @@ const Sidebar = ({
   setDataset: (dataset: string) => void;
 }) => {
   return (
-    <div>
-      <button onClick={() => setPage('page1')}>LCCDE</button>
-      <button onClick={() => setPage('page2')}>MTH</button>
-      <button onClick={() => setPage('page3')}>Tree-Based</button>
+    <div className="sidebar">
+      <button onClick={() => setPage('page1')} >LCCDE</button>
+      <button onClick={() => setPage('page2')} >MTH</button>
+      <button onClick={() => setPage('page3')} >Tree-Based</button>
       <div>
         <select onChange={(e) => setDataset(e.target.value)}>
           {/* TODO: Change dataset names */}
