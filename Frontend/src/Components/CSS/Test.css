@@ -1,6 +1,6 @@
-/* Test.css */
+
 .container {
-    display: flex; /* Use flexbox for layout */
+    display: flex;
 }
   
 .sidebar {
@@ -10,9 +10,9 @@
 }
 
 .modelPage {
-    flex: 0 0 33.33%; /* Model page takes up one-third of the container horizontally */
-    padding: 2em; /* Example padding */
-    background-color: #e0e0e0; /* Example background color */
+    flex: 0 0 33.33%; /* model page takes up one-third of the container horizontally */
+    padding: 2em;
+    background-color: #e0e0e0;
 }
 
 .sidebar button {
@@ -43,13 +43,13 @@
 }
 
 .longLine {
-    height: 3px; /* Line height */
-    width: 80%; /* Line width */
-    background-color: black; /* Color of the line */
-    margin-left: auto; /* Shift right */
-    margin-bottom: 10px; /* Spacing between the line and radio buttons */
+    height: 3px;
+    width: 80%;
+    background-color: black; /* color of line */
+    margin-left: auto; /* shift right */
+    margin-bottom: 10px; /* spacing between the line and radio buttons */
   }
   
 .emptyDiv {
-    flex: 1; /* Empty div fills the remaining space */
+    flex: 1; /* this div fills the remaining space */
 }
