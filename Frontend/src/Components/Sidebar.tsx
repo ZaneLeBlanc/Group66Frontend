@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './CSS/Test.css'
 
 // sidebar menu for selecting a model and data set
@@ -9,13 +9,55 @@ const Sidebar = ({
   setPage: (page: string) => void;
   setDataset: (dataset: string) => void;
 }) => {
-  
-  const[selectedPage, setSelectedPage] = useState('');
+
+  const [selectedPage, setSelectedPage] = useState('page1');
+  const [selectedDataset, setSelectedDataset] = useState('dataset1');
 
   const handlePageClick = (page: string) => {
     setPage(page);
     setSelectedPage(page);
   }
+
+  const handleDatasetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDataset(e.target.value);
+  };
+
+  // got bored
+  // sick function to change between the three pages using arrow keys
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault();
+          setSelectedPage((prevPage) => {
+            const pages = ['page1', 'page2', 'page3'];
+            const currentIndex = pages.indexOf(prevPage);
+            const nextIndex = (currentIndex - 1 + pages.length) % pages.length;
+            setPage(pages[nextIndex]);
+            return pages[nextIndex];
+          });
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          setSelectedPage((prevPage) => {
+            const pages = ['page1', 'page2', 'page3'];
+            const currentIndex = pages.indexOf(prevPage);
+            const nextIndex = (currentIndex + 1) % pages.length;
+            setPage(pages[nextIndex]);
+            return pages[nextIndex];
+          });
+          break;
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [setPage]);
 
   return (
     <div className="sidebar">
@@ -34,7 +76,8 @@ const Sidebar = ({
             type="radio"
             name="dataset"
             value="dataset1"
-            onChange={(e) => setDataset(e.target.value)}
+            checked={selectedDataset === 'dataset1'} // check if selectedDataset is 'dataset1'
+            onChange={handleDatasetChange}
           />
         </label>
         <label>
@@ -43,7 +86,8 @@ const Sidebar = ({
             type="radio"
             name="dataset"
             value="dataset2"
-            onChange={(e) => setDataset(e.target.value)}
+            checked={selectedDataset === 'dataset2'}
+            onChange={handleDatasetChange}
           />
         </label>
       </div>
