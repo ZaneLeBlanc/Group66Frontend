@@ -1,0 +1,55 @@
+
+.container {
+    display: flex;
+}
+  
+.sidebar {
+    display: flex;
+    /* width: 25%; */
+    flex-direction: column;
+}
+
+.modelPage {
+    flex: 0 0 33.33%; /* model page takes up one-third of the container horizontally */
+    padding: 2em;
+    background-color: #e0e0e0;
+}
+
+.sidebar button {
+    width: 70%;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left: auto; /* shifts button right */
+    border-radius: 0; /* makes square not rounded */
+
+    text-align: right;
+    font-weight: bold;
+    font-size: x-large;
+
+    background-color: #FFB26B;
+}
+
+.datasetSelection {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-top: 50%;
+    margin-bottom: auto;
+    text-align: right;
+}
+
+.sidebar input[type="radio"] {
+    margin-right: 5px;
+}
+
+.longLine {
+    height: 3px;
+    width: 80%;
+    background-color: black; /* color of line */
+    margin-left: auto; /* shift right */
+    margin-bottom: 10px; /* spacing between the line and radio buttons */
+  }
+  
+.emptyDiv {
+    flex: 1; /* this div fills the remaining space */
+}
