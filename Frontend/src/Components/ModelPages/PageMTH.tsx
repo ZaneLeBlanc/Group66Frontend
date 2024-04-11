@@ -30,23 +30,21 @@ function PageMTH(props : any) {
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div>
             <h1>RUN MTH</h1>
-            <form onSubmit={sendMTHParams}>
-                <div className="testSection">
-                    <label>
-                        Param1:
-                    <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
-                    </label>
-                    <label>
-                        Param2:
-                        <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
-                    </label>
-                    <label>
-                        Param3:
-                        <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
-                    </label>
-                    <button className="runbt" type="submit">Run MTH</button>
-                </div>
-            </form>
+            <div className="testSection">
+                <label>
+                    Param1:
+                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                </label>
+                <label>
+                    Param2:
+                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                </label>
+                <label>
+                    Param3:
+                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                </label>
+                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
+            </div>
             <div>Result: {mthResponse}</div>
         </div>
     )
