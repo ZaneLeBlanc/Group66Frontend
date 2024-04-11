@@ -1,7 +1,6 @@
 import { useState } from "react"
 // not sure if I want to put my styling in App.css or index.css @ZaneLeBlanc what do
 import './CSS/App.css'
-import axios from 'axios'
 import Sidebar from "./Sidebar";
 import PageLCCDE from "./ModelPages/PageLCCDE";
 import PageMTH from "./ModelPages/PageMTH";
@@ -10,16 +9,17 @@ import PageTree from "./ModelPages/PageTree";
 function Test() {
 
     const[currentPage, setCurrentPage] = useState('page1');
+    const[selectedDataset, setSelectedDataset] = useState('dataset1');
 
     // controls which page to render (one per model)
     const renderPage = () => {
         switch (currentPage) {
             case 'page1':
-                return <PageLCCDE />;
+                return <PageLCCDE dataset={selectedDataset}/>;
             case 'page2':
-                return <PageMTH />;
+                return <PageMTH dataset={selectedDataset}/>;
             case 'page3':
-                return <PageTree />;
+                return <PageTree dataset={selectedDataset}/>;
             default:
                 return null;
         }
@@ -27,7 +27,7 @@ function Test() {
 
     return (
         <div>
-            <Sidebar setPage={setCurrentPage} />
+            <Sidebar setPage={setCurrentPage} setDataset={setSelectedDataset} />
             <div>{renderPage()}</div>
         </div>
     )
