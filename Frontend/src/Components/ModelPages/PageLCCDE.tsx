@@ -6,7 +6,7 @@ function PageLCCDE(props : any) {
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const[lccdeResponse, setLccdeResponse] = useState('');
+    const[lccdeResponse, setLccdeResponse] = useState();
     const[nEstimators, setEstimators] = useState('');
     const[maxDepth, setMaxDepth] = useState('');
     const[learningRate, setLearningRate] = useState('');
@@ -57,33 +57,35 @@ function PageLCCDE(props : any) {
         // TODO: change input types (buttons, dropdowns, etc.)
         <div>
             <h1>RUN LCCDE</h1>
-            <div className="testSection">
-                <label>
-                Parameter 1:
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
-                </label>
-                <label>
-                    Parameter 2:
-                    <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
-                </label>
-                <label>
-                    Parameter 3:
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
-                </label>
-                <label>
-                    Parameter 4:
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
-                </label>
-                <label>
-                    Parameter 5:
-                    <input type="text" className='paraminput' value={numLeaves} onChange={(e) => setNumLeaves(e.target.value)} />
-                </label>
-                <label>
-                    Parameter 6:
-                    <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
-                </label>
-                <button className="runbt" onClick={sendLCCDEParams}>Run LCCDE</button>
-            </div>
+            <form onSubmit={sendLCCDEParams}>
+                <div className="testSection">
+                    <label>
+                    # Estimators:
+                    <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                    </label>
+                    <label>
+                        Max Depth:
+                        <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
+                    </label>
+                    <label>
+                        Learning Rate:
+                        <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    </label>
+                    <label>
+                        # Iterations:
+                        <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    </label>
+                    <label>
+                        # Leaves:
+                        <input type="text" className='paraminput' value={numLeaves} onChange={(e) => setNumLeaves(e.target.value)} />
+                    </label>
+                    <label>
+                        Boosting Type:
+                        <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
+                    </label>
+                    <button className="runbt" type="submit">Run LCCDE</button>
+                </div>
+            </form>
             <div>Result: {lccdeResponse}</div>
         </div>
     )

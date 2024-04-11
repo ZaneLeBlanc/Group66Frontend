@@ -8,6 +8,12 @@ function PageMTH(props : any) {
     // usage -> props.dataset
     const [mthRequest, setMthRequest] = useState('and here');
     const [mthResponse, setMthResponse] = useState('');
+    const[nEstimators, setEstimators] = useState('');
+    const[maxDepth, setMaxDepth] = useState('');
+    const[learningRate, setLearningRate] = useState('');
+    const[numIterations, setNumIterations] = useState('');
+    const[numLeaves, setNumLeaves] = useState('');
+    const[boostingType, setBoostingType] = useState('');
 
     const sendMTHParams = async () => {
         try {
@@ -24,11 +30,23 @@ function PageMTH(props : any) {
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div>
             <h1>RUN MTH</h1>
-            <div className="testSection">
-                <textarea value={mthRequest} onChange={(e) =>
-                setMthRequest(e.target.value)}/>
-                <button className="runbt" onClick={sendMTHParams}>Run MTH</button>
-            </div>
+            <form onSubmit={sendMTHParams}>
+                <div className="testSection">
+                    <label>
+                        Param1:
+                    <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                    </label>
+                    <label>
+                        Param2:
+                        <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    </label>
+                    <label>
+                        Param3:
+                        <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    </label>
+                    <button className="runbt" type="submit">Run MTH</button>
+                </div>
+            </form>
             <div>Result: {mthResponse}</div>
         </div>
     )
