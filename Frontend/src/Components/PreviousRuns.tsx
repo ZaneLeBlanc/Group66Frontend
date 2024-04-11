@@ -8,11 +8,40 @@ import axios from 'axios';
 import moment from 'moment';
 
 
+
 function PreviousRuns() {
+    const[lccdeRequest, setLccdeRequest] = useState(`{
+        "model_req": {
+          "dataset_name": "",
+          "XGB": {
+            "n_estimators": "",
+            "max_depth": "",
+            "learning_rate": ""
+          },
+          "LightGBM": {
+            "num_iterations": "",
+            "max_depth": "",
+            "learning_rate": "",
+            "num_leaves": "",
+            "boosting_type": ""
+          },
+          "CatBoost": {
+            "n_estimators": "",
+            "max_depth": "",
+            "learning_rate": ""
+          }
+        }
+      }`);
+
 
     const [flowStarted, setFlowStarted] = useState(false);
+    const [comparisonMode, setComparisonMode] = useState(false);
     const [selectedId, setSelectedId] = useState("-1");
+    const [comparingId, setComparingId] = useState("-1");
+    const [comparingResponse, setComparingResponse] = useState<any>();
+
     const [runsData, setRunsData] = useState<any[]>([]);
+
 
     const [filterDate, setFilterDate] = useState<any>();
     const [filterF1, setFilterF1] = useState<any>();
@@ -37,6 +66,9 @@ function PreviousRuns() {
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
         setFlowStarted(true); 
+
+        //if comparing, go back to just viewing one record
+        setComparisonMode(false);
     
         // Create updated Sidebar cards array
         var newNewArray = [];
@@ -92,7 +124,7 @@ function PreviousRuns() {
 
       fetchData();
 
-    }, []);
+    }, [comparingId]);
 
     // given an id's run, this function returns the JSON object from the initial data retrieval.
     // in the future we would want to just parse the data here to pass it to a component as props
@@ -194,6 +226,8 @@ function PreviousRuns() {
             for (var i = 0; i < newSubArray.length; i++)
             {
                 const parsedDate = moment(newSubArray[i].date, "M-DD-YYYY", false);
+
+                //console.log("comparing:["+parsedDate.format("YYYY-MM-DD") + "] AND [" + filterDate + ']')
                 if (parsedDate.format("YYYY-MM-DD") != filterDate)
                     {
                         newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
@@ -210,6 +244,36 @@ function PreviousRuns() {
         else {
             setFilteredPreviousRunCards([]);
         }
+    }
+
+    const runModifiedAndCompare = () => {
+        //Set page state variable to be comparing
+        setComparingResponse("running")
+        setComparisonMode(true);
+
+        // api call to run
+        //let lccdeRequest = "";
+        let newResponse = "";
+        console.log("within run Modified and compare");
+        const sendLCCDEParams = async () => {
+            try {
+
+                const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
+    
+                //newResponse = response.data;
+                setComparingResponse(response.data)
+                //console.log(newResponse)
+                //setComparingId(lccdeRequest.id)
+            } catch (error) {
+                console.error('Error sending response: ', error);
+            }
+        }
+        sendLCCDEParams();
+
+        //after api call, re-retrieve results and apply filter (happens from use effect dependency of comparingId)
+        
+        //render new component group that is passed a left result and right result
+        //set comparingId so the FE knows which record to show on the right side
     }
 
     return (
@@ -257,13 +321,35 @@ function PreviousRuns() {
             </div>
             <div className="page">
 
+
+
+
+            
+
             {flowStarted ? (
                 // placeholder, here we will render a specific run's parameters and result as well as a re-run button
                 //<LCCDEParams props={} />
                 //<Result id={selectedId}/> 
-                <p style={{padding: "100px"}}>{retrieveDataWithId(selectedId)}</p>
+                
+                    <div className="record">
+                        <p>{retrieveDataWithId(selectedId)}</p>
+                        <button onClick={() => runModifiedAndCompare()}>run again</button>
+                    </div>
+                
             ) : (
-                <h3>Select a record to view details</h3>
+                <h3 style={{ paddingLeft:"500px" }}>Select a record to view details</h3>
+            )}
+
+
+            {comparisonMode ? //Render new one to the right
+            (
+                <div className="record">
+                            <p>{comparingResponse /*retrieveDataWithId(comparingId)*/}</p>
+                            <button onClick={() => runModifiedAndCompare()}>run again</button>
+                </div>
+            ) : 
+            (
+                <></>
             )}
             </div>
         </div>
