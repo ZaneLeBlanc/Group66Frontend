@@ -26,8 +26,12 @@
     font-weight: bold;
     font-size: x-large;
 
-    background-color: #FFB26B;
+    background-color: grey;
 }
+
+.sidebar button.selected {
+    background-color: #ffb26b; /* background color when selected */
+  }
 
 .datasetSelection {
     display: flex;

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './CSS/Test.css'
 
 // sidebar menu for selecting a model and data set
@@ -8,11 +9,22 @@ const Sidebar = ({
   setPage: (page: string) => void;
   setDataset: (dataset: string) => void;
 }) => {
+  
+  const[selectedPage, setSelectedPage] = useState('');
+
+  const handlePageClick = (page: string) => {
+    setPage(page);
+    setSelectedPage(page);
+  }
+
   return (
     <div className="sidebar">
-      <button onClick={() => setPage('page1')} >LCCDE</button>
-      <button onClick={() => setPage('page2')} >MTH</button>
-      <button onClick={() => setPage('page3')} >Tree-Based</button>
+      <button className={selectedPage === 'page1' ? 'selected' : ''}
+        onClick={() => handlePageClick('page1')}>LCCDE</button>
+      <button className={selectedPage === 'page2' ? 'selected' : ''}
+        onClick={() => handlePageClick('page2')}>MTH</button>
+      <button className={selectedPage === 'page3' ? 'selected' : ''}
+        onClick={() => handlePageClick('page3')}>Tree-Based</button>
       <div className="datasetSelection">
         <strong> Dataset Selection </strong>
         <div className="longLine"></div> {/* Line */}
