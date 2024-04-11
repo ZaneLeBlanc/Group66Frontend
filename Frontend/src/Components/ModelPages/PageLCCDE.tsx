@@ -32,7 +32,7 @@ function PageLCCDE(props : any) {
         return JSON.stringify({
             model_req: {
                 //dataset_name: props.dataset, temp until the right thing can be sent
-                dataset_name: "CICIDS2017_sample_km.csv",
+                dataset_path: "CICIDS2017_sample_km.csv",
                 XGB: {
                     n_estimators: nEstimators,
                     max_depth: maxDepth,
