@@ -6,12 +6,17 @@ function PageLCCDE(props : any) {
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const[lccdeRequest, setLccdeRequest] = useState('');
     const[lccdeResponse, setLccdeResponse] = useState('');
+    const[nEstimators, setEstimators] = useState('');
+    const[maxDepth, setMaxDepth] = useState('');
+    const[learningRate, setLearningRate] = useState('');
+    const[numIterations, setNumIterations] = useState('');
+    const[numLeaves, setNumLeaves] = useState('');
+    const[boostingType, setBoostingType] = useState('');
 
     const sendLCCDEParams = async () => {
         try {
-            const data = props.dataset;
+            const lccdeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
 
             setLccdeResponse(response.data);
@@ -22,15 +27,63 @@ function PageLCCDE(props : any) {
         }
     }
 
+    // n_estimators, max_depth,  and learning_rate are re-used.. perhaps one input for all?
+    const generateJSON = () => {
+        return {
+            model_req: {
+                dataset_name: props.dataset,
+                XGB: {
+                    n_estimators: {nEstimators},
+                    max_depth: {maxDepth},
+                    learning_rate: {learningRate}
+                },
+                LightGBM: {
+                    num_iterations: {numIterations},
+                    max_depth: {maxDepth},
+                    learning_rate: {learningRate},
+                    num_leaves: {numLeaves},
+                    boosting_type: {boostingType}
+                },
+                CatBoost: {
+                    n_estimators: {nEstimators},
+                    max_depth: {maxDepth},
+                    learning_rate: {learningRate}
+                }
+            }
+        }
+    }
+
     return(
-        // TODO: split up params into individual entries (buttons, dropdowns, etc.)
+        // TODO: change input types (buttons, dropdowns, etc.)
         <div>
             <h1>RUN LCCDE</h1>
             <div className="testSection">
-                <textarea value={lccdeRequest} onChange={(e) =>
-                setLccdeRequest(e.target.value)}/>
+                <label>
+                Parameter 1:
+                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                </label>
+                <label>
+                    Parameter 2:
+                    <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
+                </label>
+                <label>
+                    Parameter 3:
+                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                </label>
+                <label>
+                    Parameter 4:
+                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                </label>
+                <label>
+                    Parameter 5:
+                    <input type="text" className='paraminput' value={numLeaves} onChange={(e) => setNumLeaves(e.target.value)} />
+                </label>
+                <label>
+                    Parameter 6:
+                    <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
+                </label>
                 <button className="runbt" onClick={sendLCCDEParams}>Run LCCDE</button>
-                </div>
+            </div>
             <div>Result: {lccdeResponse}</div>
         </div>
     )
