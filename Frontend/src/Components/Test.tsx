@@ -1,6 +1,6 @@
 import { useState } from "react"
 // not sure if I want to put my styling in App.css or index.css @ZaneLeBlanc what do
-import './CSS/App.css'
+import './CSS/Test.css'
 import Sidebar from "./Sidebar";
 import PageLCCDE from "./ModelPages/PageLCCDE";
 import PageMTH from "./ModelPages/PageMTH";
@@ -26,9 +26,9 @@ function Test() {
     };
 
     return (
-        <div>
+        <div className="container">
             <Sidebar setPage={setCurrentPage} setDataset={setSelectedDataset} />
-            <div>{renderPage()}</div>
+            <div className="modelPage">{renderPage()}</div>
         </div>
     )
 }

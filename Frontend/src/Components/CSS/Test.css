@@ -1,0 +1,20 @@
+/* Test.css */
+.container {
+    display: flex; /* Use flexbox for layout */
+  }
+  
+  .sidebar {
+    width: 25%; /* Sidebar takes up 25% of the container */
+    flex-direction: column;
+    background-color: #f0f0f0; /* Example background color */
+  }
+  
+  .modelPage {
+    flex: 0 0 33.33%; /* Model page takes up one-third of the container horizontally */
+    padding: 20px; /* Example padding */
+    background-color: #e0e0e0; /* Example background color */
+  }
+  
+  .emptyDiv {
+    flex: 1; /* Empty div fills the remaining space */
+  }
