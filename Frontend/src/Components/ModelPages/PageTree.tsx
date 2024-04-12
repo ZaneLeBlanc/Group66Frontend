@@ -28,26 +28,26 @@ function PageTree(props : any) {
 
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN TREE-BASED</h1>
-            <form onSubmit={sendTreeParams}>
-                <div className="testSection">
-                    <label>
-                        Param1:
-                    <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
-                    </label>
-                    <label>
-                        Param2:
-                        <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
-                    </label>
-                    <label>
-                        Param3:
-                        <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
-                    </label>
-                    <button className="runbt" type="submit">Run Tree</button>
-                </div>
-            </form>
-            <div>Result: {treeResponse}</div>
+            <div className="testSection">
+                <label>
+                    Param1:
+                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                </label>
+                <label>
+                    Param2:
+                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                </label>
+                <label>
+                    Param3:
+                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                </label>
+                <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
+            </div>
+            <div className="testSection">
+                <div>Result: {treeResponse}</div>
+            </div>
         </div>
     )
 }
