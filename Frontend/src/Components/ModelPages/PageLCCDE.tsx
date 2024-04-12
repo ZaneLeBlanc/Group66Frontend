@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import axios from 'axios'
+import '../CSS/Model.css'
 
 function PageLCCDE(props : any) {
     /*Props:
@@ -55,7 +56,7 @@ function PageLCCDE(props : any) {
 
     return(
         // TODO: change input types (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN LCCDE</h1>
             <div className="testSection">
                 <label>
@@ -84,7 +85,9 @@ function PageLCCDE(props : any) {
                 </label>
                 <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
             </div>
-            <div>Result: {lccdeResponse}</div>
+            <div className="testSection">
+                <div className="result">Result: {lccdeResponse}</div>
+            </div>
         </div>
     )
 }

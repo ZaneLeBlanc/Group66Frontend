@@ -28,7 +28,7 @@ function PageMTH(props : any) {
 
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN MTH</h1>
             <div className="testSection">
                 <label>
@@ -45,7 +45,9 @@ function PageMTH(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
-            <div>Result: {mthResponse}</div>
+            <div className="testSection">
+                <div>Result: {mthResponse}</div>
+            </div>
         </div>
     )
 }
