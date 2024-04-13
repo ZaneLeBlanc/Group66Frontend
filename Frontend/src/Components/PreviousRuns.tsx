@@ -6,13 +6,14 @@ import PreviousRunCard from './PreviousRunCard'
 import './CSS/PreviousRuns.css'
 import axios from 'axios';
 import moment from 'moment';
+import PageLCCDE from './ModelPages/PageLCCDE';
 
 
 
 function PreviousRuns() {
     const[lccdeRequest, setLccdeRequest] = useState(`{
         "model_req": {
-          "dataset_name": "",
+          "dataset_path": "",
           "XGB": {
             "n_estimators": "",
             "max_depth": "",
@@ -37,8 +38,8 @@ function PreviousRuns() {
     const [flowStarted, setFlowStarted] = useState(false);
     const [comparisonMode, setComparisonMode] = useState(false);
     const [selectedId, setSelectedId] = useState("-1");
+    const [selectedLCCDEdata, setSelectedLCCDEdata] = useState<any>();
     const [comparingId, setComparingId] = useState("-1");
-    const [comparingResponse, setComparingResponse] = useState<any>();
 
     const [runsData, setRunsData] = useState<any[]>([]);
 
@@ -88,13 +89,21 @@ function PreviousRuns() {
         newNewArray.push(newArray);
         
         // Update the state with the new array
-        setSelectedId(newSelectedId); 
+        setSelectedId(newSelectedId);
+        retrieveDataWithId(newSelectedId);//this sets the component on the screen 
         setFilteredPreviousRunCards(newNewArray);
+
     };
 
     // Retrieve all previous runs data
     //use effect makes this only run once
     useEffect(() => {
+    
+      
+      fetchData();
+
+    }, [comparingId]);
+
     const fetchData = async () => {
         // collect the data and store as an array in React state variable
         try {
@@ -119,28 +128,85 @@ function PreviousRuns() {
             
         } catch (error) {
           console.error('Error fetching card data:', error);
-        }
-      };
-
-      fetchData();
-
-    }, [comparingId]);
+        }}
 
     // given an id's run, this function returns the JSON object from the initial data retrieval.
     // in the future we would want to just parse the data here to pass it to a component as props
     // I'm pretty sure this is not how to properly make a function, I think I need to use the const thing
+
+    //TODO combine retrieveDataWithId 1+2, make a more intuitive solution
     function retrieveDataWithId(run_id: any) {
         //find the object in the array with the correct ID
         for(var i = 0; i < runsData.length; i++)
             {
                 if(runsData[i].id.toString() === run_id)
                 {
-                    var theString = JSON.stringify(runsData[i]);
-                    //console.log("retrieve: " + theString);
-                    return theString;
+                    //parse parameters 
+
+                    let newObj = {
+                        nEstimators: runsData[i].XGB.n_estimators,
+                        
+                        maxDepth:runsData[i].XGB.max_depth,
+                        learningRate:runsData[i].XGB.learning_rate,
+                        numIterations:runsData[i].LightGBM.num_iterations,
+                        numLeaves:runsData[i].LightGBM.num_leaves,
+                        boostingType:runsData[i].LightGBM.boosting_type,
+                        //parse result RESULT COMPONENT WOULD GO HERE
+                        
+                        result:{executionTime: parseFloat(runsData[i].execution_time).toFixed(5),
+                                accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                                precision: parseFloat(runsData[i].precision).toFixed(5),
+                                recall: parseFloat(runsData[i].recall).toFixed(5),
+                                f1: parseFloat(runsData[i].f1).toFixed(5),
+                                heatmap: runsData[i].heatmap
+                                }
+                        
+                    }
+                    setSelectedLCCDEdata(newObj)
                 }
             }
     }
+
+    //TODO combine retrieveDataWithId 1+2, make a more intuitive solution
+    function retrieveDataWithId2(run_id: any) {
+        //find the object in the array with the correct ID
+        for(var i = 0; i < runsData.length; i++)
+        {
+            if(runsData[i].id.toString() === run_id)
+            {
+                //parse parameters 
+
+                return(
+                    <PageLCCDE
+                    key={comparingId}
+
+                    runnable={false}
+                    nEstimators={runsData[i].XGB.n_estimators}
+                    maxDepth={runsData[i].XGB.max_depth}
+                    learningRate={runsData[i].XGB.learning_rate}
+                    numIterations={runsData[i].LightGBM.num_iterations}
+                    numLeaves={runsData[i].LightGBM.num_leaves}
+                    boostingType={runsData[i].LightGBM.boosting_type}
+                    //This needs to be replaced with Imad's result component
+                    result={
+                        parseFloat(runsData[i].f1).toFixed(5) + " " +
+                        parseFloat(runsData[i].accuracy).toFixed(5) + " " + 
+                        parseFloat(runsData[i].precision).toFixed(5) + " " + 
+                        parseFloat(runsData[i].recall).toFixed(5) + " " +
+                        parseFloat(runsData[i].execution_time).toFixed(5) + " " +
+                        runsData[i].heatmap
+                        }
+                    />
+                )
+            }
+
+        }
+        return <></>
+    }
+    
+
+    //testing to get data to change on new selection
+    //useEffect(() => {}, [selectedLCCDEdata])
 
     //Runs handle filter whenever a change is made to any of the filter variables
     useEffect(() => {
@@ -248,37 +314,72 @@ function PreviousRuns() {
 
     const runModifiedAndCompare = () => {
         //Set page state variable to be comparing
-        setComparingResponse("running")
         setComparisonMode(true);
+        setComparingId("-1")
 
         // api call to run
         //let lccdeRequest = "";
-        let newResponse = "";
+        //let newResponse = "";
         console.log("within run Modified and compare");
         const sendLCCDEParams = async () => {
             try {
+                //not saving response, instead just reretreiveing lccde records in order to get the params and id
+                /*const response = */await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
+                fetchData();
+                var largestId= -1
 
-                const response = await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
-    
-                //newResponse = response.data;
-                setComparingResponse(response.data)
-                //console.log(newResponse)
-                //setComparingId(lccdeRequest.id)
-            } catch (error) {
-                console.error('Error sending response: ', error);
-            }
-        }
+                for (var i = 0; i< previousRunCards.length; i++)
+                    {
+                        if (parseInt(previousRunCards[i].run_ID) > largestId)
+                        {
+                            largestId = parseInt(previousRunCards[i].run_ID)
+                        }
+                    }
+                    setComparingId((largestId+1).toString())
+                    } catch (error) {
+                        console.error('Error sending response: ', error);
+                    }
+                }
         sendLCCDEParams();
 
         //after api call, re-retrieve results and apply filter (happens from use effect dependency of comparingId)
+        //get the latest ID
+        
         
         //render new component group that is passed a left result and right result
         //set comparingId so the FE knows which record to show on the right side
     }
 
+    const handleChildData = (nEstimators:any, maxDepth:any, learningRate:any, numIterations:any, numLeaves:any, boostingType:any) => {
+        setLccdeRequest(
+            JSON.stringify({
+                "model_req": {
+                  "dataset_path": "test",
+                  "XGB": {
+                    "n_estimators": nEstimators,
+                    "max_depth": maxDepth,
+                    "learning_rate": learningRate
+                  },
+                  "LightGBM": {
+                    "num_iterations": numIterations,
+                    "max_depth": maxDepth,
+                    "learning_rate": learningRate,
+                    "num_leaves": numLeaves,
+                    "boosting_type": boostingType
+                  },
+                  "CatBoost": {
+                    "n_estimators": nEstimators,
+                    "max_depth": maxDepth,
+                    "learning_rate": learningRate
+                  }
+                }
+              })
+        )
+    }
+
     return (
         <div className="container">
-            <div className="sidebar">
+            <div className="historySidebar">
                 <div className="filterContainer">
                     <h2>Filter</h2>
                     <label htmlFor="date">Date:</label>
@@ -321,18 +422,32 @@ function PreviousRuns() {
             </div>
             <div className="page">
 
-
-
-
-            
-
             {flowStarted ? (
                 // placeholder, here we will render a specific run's parameters and result as well as a re-run button
                 //<LCCDEParams props={} />
                 //<Result id={selectedId}/> 
-                
                     <div className="record">
-                        <p>{retrieveDataWithId(selectedId)}</p>
+
+                        <PageLCCDE 
+                        key={selectedId}
+                        sendDataToParent={handleChildData}
+
+                        runnable={false}
+                        nEstimators={selectedLCCDEdata.nEstimators}
+                        maxDepth={selectedLCCDEdata.maxDepth}
+                        learningRate={selectedLCCDEdata.learningRate}
+                        numIterations={selectedLCCDEdata.numIterations}
+                        numLeaves={selectedLCCDEdata.numLeaves}
+                        boostingType={selectedLCCDEdata.boostingType}
+                        //This needs to be replaced with Imad's result component
+                        result={selectedLCCDEdata.result.f1 + " " + 
+                                selectedLCCDEdata.result.accuracy + " " +
+                                selectedLCCDEdata.result.precision + " " +
+                                selectedLCCDEdata.result.recall + " " +
+                                selectedLCCDEdata.result.executionTime + " " +
+                                selectedLCCDEdata.result.heatmap}
+                        />
+
                         <button onClick={() => runModifiedAndCompare()}>run again</button>
                     </div>
                 
@@ -344,7 +459,7 @@ function PreviousRuns() {
             {comparisonMode ? //Render new one to the right
             (
                 <div className="record">
-                            <p>{comparingResponse /*retrieveDataWithId(comparingId)*/}</p>
+                            {retrieveDataWithId2(comparingId)}
                             <button onClick={() => runModifiedAndCompare()}>run again</button>
                 </div>
             ) : 

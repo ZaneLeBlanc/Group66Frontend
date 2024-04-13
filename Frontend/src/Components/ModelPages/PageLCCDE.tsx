@@ -1,10 +1,33 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import axios from 'axios'
 import '../CSS/Model.css'
 
-function PageLCCDE() {
-    const[lccdeRequest, setLccdeRequest] = useState('');
-    const[lccdeResponse, setLccdeResponse] = useState('');
+function PageLCCDE(props : any) {
+    /*Props:
+    dataset: int # which dataset user selected
+    */
+    // usage -> props.dataset
+    const[lccdeResponse, setLccdeResponse] = useState(props.result);
+    const[nEstimators, setEstimators] = useState(props.nEstimators);
+    const[maxDepth, setMaxDepth] = useState(props.maxDepth);
+    const[learningRate, setLearningRate] = useState(props.learningRate);
+    const[numIterations, setNumIterations] = useState(props.numIterations);
+    const[numLeaves, setNumLeaves] = useState(props.numLeaves);
+    const[boostingType, setBoostingType] = useState(props.boostingType);
+
+
+    //useEffect, when any of the variables change send to parent, 
+    //this is so parameters can be used to make a new run in comparison mode
+    const exportParams = (nEstimators:any, maxDepth:any, learningRate:any, numIterations:any, numLeaves:any, boostingType:any) => {
+        if (props.sendDataToParent)
+            {
+                props.sendDataToParent(nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType)
+            }
+    }
+    useEffect(() => {
+        exportParams(nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType);
+    }, 
+    [nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType])
 
     const sendLCCDEParams = async () => {
         try {
@@ -74,7 +97,9 @@ function PageLCCDE() {
                     Boosting Type:
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
-                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
+                {props.runnable ? (<button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>)
+                : (<></>)}
+                
             </div>
             <div className="testSection">
                 <div className="result">Result: {lccdeResponse}</div>

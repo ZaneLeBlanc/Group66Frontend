@@ -74,6 +74,7 @@ html, body {
 h1 {
   font-size: 40px;
   padding-left: 20px;
+  padding-top: 25px; /*I can't tell why it got pushed up, but this pushes it back down 4/11 -Zane */
 }
 
 .runbt {
