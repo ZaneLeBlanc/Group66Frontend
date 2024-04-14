@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import axios from 'axios'
+import Result from '../Result'
 
 function PageLCCDE(props : any) {
     /*Props:
@@ -13,6 +14,15 @@ function PageLCCDE(props : any) {
     const[numIterations, setNumIterations] = useState('');
     const[numLeaves, setNumLeaves] = useState('');
     const[boostingType, setBoostingType] = useState('');
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(); 
+    
 
     const sendLCCDEParams = async () => {
         try {
@@ -20,6 +30,8 @@ function PageLCCDE(props : any) {
             const response = await axios.put('http://localhost:5000/runLccde', { code: lccdeRequest });
 
             setLccdeResponse(response.data);
+
+            setResultData(response.data.model_results);
             console.log("setLCCDE");
             console.log(response);
         } catch (error) {
@@ -84,8 +96,18 @@ function PageLCCDE(props : any) {
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
                 <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
+                <p>Result:</p>
             </div>
-            <div>Result: {lccdeResponse}</div>
+            {resultData && (
+                <Result 
+                    execution_time={resultData.execution_time} 
+                    accuracy={resultData.accuracy}
+                    precision={resultData.precision}
+                    recall={resultData.recall}
+                    f1_score={resultData.f1_score}
+                    heatmap={resultData.heatmap} 
+                />
+            )}
         </div>
     )
 }
