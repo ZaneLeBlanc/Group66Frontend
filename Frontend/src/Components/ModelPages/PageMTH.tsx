@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import axios from 'axios'
+import Result from '../Result.tsx'
 
 function PageMTH(props : any) {
     /*Props:
@@ -13,7 +14,14 @@ function PageMTH(props : any) {
     const [trainingAllocation, setTrainingAllocation] = useState('');
     const [features, setFeatures] = useState('');
     const [evals, setEvals] = useState('');
-    const [resultData, setResultData] = useState(null);
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(); 
 
     const sendMTHParams = async () => {
         try {
@@ -21,6 +29,7 @@ function PageMTH(props : any) {
             const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
 
             setMthResponse(response.data);
+            setResultData(response.data.model_results);
         } catch (error) {
             console.error('Error sending response: ', error);
         }
@@ -53,7 +62,17 @@ function PageMTH(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
-            <div>Result: {mthResponse}</div>
+            <div>Result:</div>
+            {resultData && (
+                <Result 
+                    execution_time={resultData.execution_time} 
+                    accuracy={resultData.accuracy}
+                    precision={resultData.precision}
+                    recall={resultData.recall}
+                    f1_score={resultData.f1_score}
+                    heatmap={resultData.heatmap} 
+                />
+            )}
         </div>
     )
 }

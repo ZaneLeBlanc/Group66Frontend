@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import axios from 'axios'
+import Result from '../Result'
 
 function PageTree(props : any) {
     /*Props:
@@ -14,13 +15,21 @@ function PageTree(props : any) {
     const[numIterations, setNumIterations] = useState('');
     const[numLeaves, setNumLeaves] = useState('');
     const[boostingType, setBoostingType] = useState('');
-
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(); 
     const sendTreeParams = async () => {
         try {
             const data = props.dataset;
             const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
             setTreeResponse(response.data);
+            setResultData(response.data.model_results);
         } catch (error) {
             console.error('Error sending response: ', error);
         }
@@ -45,7 +54,17 @@ function PageTree(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
             </div>
-            <div>Result: {treeResponse}</div>
+           <div>Result: </div>
+           {resultData && (
+                <Result 
+                    execution_time={resultData.execution_time} 
+                    accuracy={resultData.accuracy}
+                    precision={resultData.precision}
+                    recall={resultData.recall}
+                    f1_score={resultData.f1_score}
+                    heatmap={resultData.heatmap} 
+                />
+            )}
         </div>
     )
 }
