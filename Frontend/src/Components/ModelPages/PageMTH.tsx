@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import axios from 'axios'
 import Result from '../Result.tsx'
+import '../CSS/Model.css'
 
 function PageMTH(props : any) {
     /*Props:
@@ -62,7 +63,7 @@ function PageMTH(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
-            <div>Result:</div>
+            <div className="testSection">Result:</div>
             {resultData && (
                 <Result 
                     execution_time={resultData.execution_time} 

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 import Result from '../Result'
+import '../CSS/Model.css'
 
 function PageLCCDE(props : any) {
     /*Props:

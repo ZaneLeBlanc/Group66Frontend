@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import axios from 'axios'
 import Result from '../Result'
+import '../CSS/Model.css'
 
 function PageTree(props : any) {
     /*Props:
@@ -37,7 +38,7 @@ function PageTree(props : any) {
 
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN TREE-BASED</h1>
             <div className="testSection">
                 <label>
@@ -54,7 +55,7 @@ function PageTree(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
             </div>
-           <div>Result: </div>
+           <div className="testSection">Result: </div>
            {resultData && (
                 <Result 
                     execution_time={resultData.execution_time} 
