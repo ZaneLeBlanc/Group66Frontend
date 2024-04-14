@@ -8,12 +8,12 @@ function PageMTH(props : any) {
     // usage -> props.dataset
     const [mthRequest, setMthRequest] = useState('and here');
     const [mthResponse, setMthResponse] = useState('');
-    const[nEstimators, setEstimators] = useState('');
-    const[maxDepth, setMaxDepth] = useState('');
-    const[learningRate, setLearningRate] = useState('');
-    const[numIterations, setNumIterations] = useState('');
-    const[numLeaves, setNumLeaves] = useState('');
-    const[boostingType, setBoostingType] = useState('');
+    const [cluster, setCluster] = useState('');
+    const [batchSize, setBatchSize] = useState('');
+    const [trainingAllocation, setTrainingAllocation] = useState('');
+    const [features, setFeatures] = useState('');
+    const [evals, setEvals] = useState('');
+    const [resultData, setResultData] = useState(null);
 
     const sendMTHParams = async () => {
         try {
@@ -32,16 +32,24 @@ function PageMTH(props : any) {
             <h1>RUN MTH</h1>
             <div className="testSection">
                 <label>
-                    Param1:
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                    Clusters:
+                <input type="text" className='paraminput' value={cluster} onChange={(e) => setCluster(e.target.value)} />
                 </label>
                 <label>
-                    Param2:
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    Batch Size:
+                    <input type="text" className='paraminput' value={batchSize} onChange={(e) => setBatchSize(e.target.value)} />
                 </label>
                 <label>
-                    Param3:
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    Training Allocation:
+                    <input type="text" className='paraminput' value={trainingAllocation} onChange={(e) => setTrainingAllocation(e.target.value)} />
+                </label>
+                <label>
+                    Features:
+                    <input type="text" className='paraminput' value={features} onChange={(e) => setFeatures(e.target.value)} />
+                </label>
+                <label>
+                    HPO Max Evals:
+                    <input type="text" className='paraminput' value={evals} onChange={(e) => setEvals(e.target.value)} />
                 </label>
                 <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
