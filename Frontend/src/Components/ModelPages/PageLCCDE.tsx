@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
+import Result from '../Result'
 import '../CSS/Model.css'
 import {ring2} from 'ldrs'
 
@@ -9,7 +10,6 @@ function PageLCCDE(props : any) {
     */
     // usage -> props.dataset
 
-    const[lccdeResponse, setLccdeResponse] = useState(props.result || "");
     const[nEstimators, setEstimators] = useState(props.nEstimators || "");
     const[maxDepth, setMaxDepth] = useState(props.maxDepth || "");
     const[learningRate, setLearningRate] = useState(props.learningRate || "");
@@ -17,6 +17,15 @@ function PageLCCDE(props : any) {
     const[numLeaves, setNumLeaves] = useState(props.numLeaves || "");
     const[boostingType, setBoostingType] = useState(props.boostingType || "");
     const[isLoading, setIsLoading] = useState(false);
+
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(props.result); 
 
     ring2.register() 
 
@@ -32,6 +41,8 @@ function PageLCCDE(props : any) {
         exportParams(nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType);
     }, 
     [nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType])
+    
+    
 
     const sendLCCDEParams = async () => {
         try {
@@ -41,8 +52,8 @@ function PageLCCDE(props : any) {
             const lccdeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runLccde', { code: lccdeRequest });
 
-            setLccdeResponse(response.data);
-            console.log("setLCCDE");
+            const objResponse = JSON.parse(response.data)
+            setResultData(objResponse.model_results);
             console.log(response);
 
             //turn off loading spinner
@@ -114,7 +125,6 @@ function PageLCCDE(props : any) {
                 
             </div>
             <div className="testSection">
-                <div className="result">Result: {lccdeResponse}</div>
                 {/*show loading spinner if loading */}
                 {isLoading ? (<l-ring-2
                     size="40"
@@ -125,7 +135,18 @@ function PageLCCDE(props : any) {
                     color="black" 
                     ></l-ring-2>) 
                 : (<></>)}
+                {resultData && (
+                <Result 
+                    execution_time={resultData.execution_time} 
+                    accuracy={resultData.accuracy}
+                    precision={resultData.precision}
+                    recall={resultData.recall}
+                    f1_score={resultData.f1_score}
+                    heatmap={resultData.heatmap} //needs to be converted here to an img
+                />
+            )}
             </div>
+            
         </div>
     )
 }

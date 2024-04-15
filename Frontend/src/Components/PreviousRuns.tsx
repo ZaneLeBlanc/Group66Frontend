@@ -42,6 +42,7 @@ function PreviousRuns() {
 
     const [leftId, setLeftId] = useState("-1");
     const [leftLCCDEdata, setLeftLCCDEdata] = useState<any>();
+
     const [rightId, setRightId] = useState("-1");
     const [rightLCCDEdata, setRightLCCDEdata] = useState<any>();
 
@@ -83,6 +84,8 @@ function PreviousRuns() {
         setLeftId(newSelectedId);
         retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
         setFilteredPreviousRunCards(newNewArray);
+
+        //setStaticLeftLCCDEdata(leftLCCDEdata);
     };
 
     // Retrieve all previous runs data
@@ -98,6 +101,12 @@ function PreviousRuns() {
         retrieveDataWithId(leftId, true);
     }, [leftId])
 
+    useEffect(() => {
+    }, [rightLCCDEdata])
+
+    useEffect(() => {
+    }, [leftLCCDEdata])
+
     //Runs handle filter whenever a change is made to any of the filter variables
     useEffect(() => {
         handleFilter();
@@ -109,11 +118,10 @@ function PreviousRuns() {
           const response = await axios.get('http://localhost:5000/retrieveLccde');
         let data = JSON.parse(response.data); 
         setRunsData(data.rows);
-        console.log("data=" + JSON.stringify(data.rows));
 
         /*
         const response2 = await axios.get('http://localhost:5000/retrieveTree')
-        let data2 = JSON.parse(response.data);
+        let data2 = JSON.parse(response2.data);
         console.log("data2=" + JSON.stringify(data2.rows));
         */
 
@@ -240,6 +248,7 @@ function PreviousRuns() {
     }
 
     const retrieveDataWithId = (run_id: any, leftSide:boolean) => {
+
         //find the object in the array with the correct ID
         if (run_id == "null")
         {
@@ -251,9 +260,7 @@ function PreviousRuns() {
             {
                 if (leftSide)
                 {
-
-                    setLeftLCCDEdata(
-                        <PageLCCDE
+                    let newComponent = <PageLCCDE
                         key={leftId}
                         sendDataToParent={handleChildData}
                         className="pageElement"
@@ -266,43 +273,46 @@ function PreviousRuns() {
                         numLeaves={runsData[i].LightGBM.num_leaves}
                         boostingType={runsData[i].LightGBM.boosting_type}
                         //This needs to be replaced with Imad's result component
-                        result={
-                            parseFloat(runsData[i].f1).toFixed(5) + " " +
-                            parseFloat(runsData[i].accuracy).toFixed(5) + " " + 
-                            parseFloat(runsData[i].precision).toFixed(5) + " " + 
-                            parseFloat(runsData[i].recall).toFixed(5) + " " +
-                            parseFloat(runsData[i].execution_time).toFixed(5) + " " +
-                            runsData[i].heatmap
-                        }
-                        />
-                    )
+
+                        result={{
+                            f1_score: parseFloat(runsData[i].f1).toFixed(5),
+                            accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                            precision: parseFloat(runsData[i].precision).toFixed(5),
+                            recall: parseFloat(runsData[i].recall).toFixed(5),
+                            execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
+                            heatmap: runsData[i].heatmap
+                        }}
+                    
+                    />
+                    setLeftLCCDEdata(newComponent)
+                    //setStaticLeftLCCDEdata(newComponent)
                 }
                 else
                 {
-                    setRightLCCDEdata(
-                        <PageLCCDE
-                        key={rightId}
-                        sendDataToParent={handleChildData}
-                        className="pageElement"
-    
-                        runnable={false}
-                        nEstimators={runsData[i].XGB.n_estimators}
-                        maxDepth={runsData[i].XGB.max_depth}
-                        learningRate={runsData[i].XGB.learning_rate}
-                        numIterations={runsData[i].LightGBM.num_iterations}
-                        numLeaves={runsData[i].LightGBM.num_leaves}
-                        boostingType={runsData[i].LightGBM.boosting_type}
-                        //This needs to be replaced with Imad's result component
-                        result={
-                            parseFloat(runsData[i].f1).toFixed(5) + " " +
-                            parseFloat(runsData[i].accuracy).toFixed(5) + " " + 
-                            parseFloat(runsData[i].precision).toFixed(5) + " " + 
-                            parseFloat(runsData[i].recall).toFixed(5) + " " +
-                            parseFloat(runsData[i].execution_time).toFixed(5) + " " +
-                            runsData[i].heatmap
-                            }
-                        />
-                    )
+                    let newComponent = <PageLCCDE
+                    key={rightId}
+                    sendDataToParent={handleChildData}
+                    className="pageElement"
+
+                    runnable={false}
+                    nEstimators={runsData[i].XGB.n_estimators}
+                    maxDepth={runsData[i].XGB.max_depth}
+                    learningRate={runsData[i].XGB.learning_rate}
+                    numIterations={runsData[i].LightGBM.num_iterations}
+                    numLeaves={runsData[i].LightGBM.num_leaves}
+                    boostingType={runsData[i].LightGBM.boosting_type}
+                    //This needs to be replaced with Imad's result component
+                    result={{
+                        f1_score: parseFloat(runsData[i].f1).toFixed(5),
+                        accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                        precision: parseFloat(runsData[i].precision).toFixed(5),
+                        recall: parseFloat(runsData[i].recall).toFixed(5),
+                        execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
+                        heatmap: runsData[i].heatmap
+                    }}
+                    />
+                    setRightLCCDEdata(newComponent)
+                    //setStaticRightLCCDEdata(newComponent)
                 }
                 
             }
@@ -313,12 +323,18 @@ function PreviousRuns() {
     const runModifiedAndCompare = (leftSide: boolean) => {
         //Set page state variable to be comparing
         setComparisonMode(true);
-
+        console.log("runModiandcompare")
+        
         //process leftOrRight (1 = left called run again, 2= right called run again) 
         if (leftSide == true)
+        {
             setRightId("-1")  //sets that side of the page to show "runnning"
+        }
         else 
+        {
             setLeftId("-1")
+        }
+            
 
         const sendLCCDEParams = async () => {
             try {
@@ -339,8 +355,23 @@ function PreviousRuns() {
                 else 
                     setLeftId((largestId+1).toString()) //right called, so change left side
 
+
+                
                 } catch (error) {
                     console.error('Error sending response: ', error);
+                    //handle error on rerun
+                    console.log("handle error")
+                    if (leftSide == true)
+                    {
+                        console.log("setting right ID to " + 0);
+                        setRightId('0')
+                        setRightLCCDEdata(<p>Error Processing Run</p>)
+                    }
+                    else 
+                    {
+                        setLeftId('0')
+                        setLeftLCCDEdata(<p>Error Processing Run</p>)
+                    }
                 }
                 }
         sendLCCDEParams();
@@ -455,7 +486,8 @@ function PreviousRuns() {
                     {parseInt(rightId) > -1 ?
                     (<>
                         {rightLCCDEdata}
-                        <button onClick={() => runModifiedAndCompare(false)}>Run</button>
+                        {rightId != '0' ? (<button onClick={() => runModifiedAndCompare(false)}>Run</button>) : <></>}
+                        
                     </>) : 
                         (
                             <>
