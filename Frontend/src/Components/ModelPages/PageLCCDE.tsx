@@ -7,13 +7,13 @@ function PageLCCDE(props : any) {
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const[lccdeResponse, setLccdeResponse] = useState(props.result);
-    const[nEstimators, setEstimators] = useState(props.nEstimators);
-    const[maxDepth, setMaxDepth] = useState(props.maxDepth);
-    const[learningRate, setLearningRate] = useState(props.learningRate);
-    const[numIterations, setNumIterations] = useState(props.numIterations);
-    const[numLeaves, setNumLeaves] = useState(props.numLeaves);
-    const[boostingType, setBoostingType] = useState(props.boostingType);
+    const[lccdeResponse, setLccdeResponse] = useState(props.result || "");
+    const[nEstimators, setEstimators] = useState(props.nEstimators || "");
+    const[maxDepth, setMaxDepth] = useState(props.maxDepth || "");
+    const[learningRate, setLearningRate] = useState(props.learningRate || "");
+    const[numIterations, setNumIterations] = useState(props.numIterations || "");
+    const[numLeaves, setNumLeaves] = useState(props.numLeaves || "");
+    const[boostingType, setBoostingType] = useState(props.boostingType || "");
 
 
     //useEffect, when any of the variables change send to parent, 
