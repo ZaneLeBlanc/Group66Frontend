@@ -7,10 +7,13 @@ import './CSS/PreviousRuns.css'
 import axios from 'axios';
 import moment from 'moment';
 import PageLCCDE from './ModelPages/PageLCCDE';
+import { ring2 } from 'ldrs'
 
 
 
 function PreviousRuns() {
+    ring2.register() //loading ring
+
     const[lccdeRequest, setLccdeRequest] = useState(`{
         "model_req": {
           "dataset_path": "",
@@ -106,6 +109,13 @@ function PreviousRuns() {
           const response = await axios.get('http://localhost:5000/retrieveLccde');
         let data = JSON.parse(response.data); 
         setRunsData(data.rows);
+        console.log("data=" + JSON.stringify(data.rows));
+
+        /*
+        const response2 = await axios.get('http://localhost:5000/retrieveTree')
+        let data2 = JSON.parse(response.data);
+        console.log("data2=" + JSON.stringify(data2.rows));
+        */
 
         //this maps each item in the data array, to be a summary card for the sidebar array. lots of ugly typescript in the top
         const formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
@@ -246,6 +256,7 @@ function PreviousRuns() {
                         <PageLCCDE
                         key={leftId}
                         sendDataToParent={handleChildData}
+                        className="pageElement"
                         
                         runnable={false}
                         nEstimators={runsData[i].XGB.n_estimators}
@@ -272,6 +283,7 @@ function PreviousRuns() {
                         <PageLCCDE
                         key={rightId}
                         sendDataToParent={handleChildData}
+                        className="pageElement"
     
                         runnable={false}
                         nEstimators={runsData[i].XGB.n_estimators}
@@ -418,7 +430,17 @@ function PreviousRuns() {
                         <button onClick={() => runModifiedAndCompare(true)}>Run</button>
                     </>) :
                     (
-                        <div className="runningText">~Running~</div>
+                        <>
+                                <div className="runningText">Running</div>
+                                <l-ring-2
+                                    size="50"
+                                    stroke="5"
+                                    stroke-length="0.25"
+                                    bg-opacity="0.1"
+                                    speed="0.9" 
+                                    color="black" 
+                                    ></l-ring-2>
+                            </>
                     )}
                 </div>
                 
@@ -436,7 +458,17 @@ function PreviousRuns() {
                         <button onClick={() => runModifiedAndCompare(false)}>Run</button>
                     </>) : 
                         (
-                        <div className="runningText">~Running~</div>
+                            <>
+                                <div className="runningText">Running</div>
+                                <l-ring-2
+                                    size="50"
+                                    stroke="5"
+                                    stroke-length="0.25"
+                                    bg-opacity="0.1"
+                                    speed="0.9" 
+                                    color="black" 
+                                    ></l-ring-2>
+                            </>
                         )} 
                 </div>
             ) : 

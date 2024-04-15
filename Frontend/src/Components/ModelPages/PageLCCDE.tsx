@@ -1,12 +1,14 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
 import '../CSS/Model.css'
+import {ring2} from 'ldrs'
 
 function PageLCCDE(props : any) {
     /*Props:
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
+
     const[lccdeResponse, setLccdeResponse] = useState(props.result || "");
     const[nEstimators, setEstimators] = useState(props.nEstimators || "");
     const[maxDepth, setMaxDepth] = useState(props.maxDepth || "");
@@ -14,7 +16,9 @@ function PageLCCDE(props : any) {
     const[numIterations, setNumIterations] = useState(props.numIterations || "");
     const[numLeaves, setNumLeaves] = useState(props.numLeaves || "");
     const[boostingType, setBoostingType] = useState(props.boostingType || "");
+    const[isLoading, setIsLoading] = useState(false);
 
+    ring2.register() 
 
     //useEffect, when any of the variables change send to parent, 
     //this is so parameters can be used to make a new run in comparison mode
@@ -31,14 +35,22 @@ function PageLCCDE(props : any) {
 
     const sendLCCDEParams = async () => {
         try {
+            //Turn loading spinner on temporarily
+            setIsLoading(true)
+
             const lccdeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runLccde', { code: lccdeRequest });
 
             setLccdeResponse(response.data);
             console.log("setLCCDE");
             console.log(response);
+
+            //turn off loading spinner
+            setIsLoading(false)
+
         } catch (error) {
             console.error('Error sending response: ', error);
+            setIsLoading(false)
         }
     }
 
@@ -103,6 +115,16 @@ function PageLCCDE(props : any) {
             </div>
             <div className="testSection">
                 <div className="result">Result: {lccdeResponse}</div>
+                {/*show loading spinner if loading */}
+                {isLoading ? (<l-ring-2
+                    size="40"
+                    stroke="5"
+                    stroke-length="0.25"
+                    bg-opacity="0.1"
+                    speed="0.8" 
+                    color="black" 
+                    ></l-ring-2>) 
+                : (<></>)}
             </div>
         </div>
     )
