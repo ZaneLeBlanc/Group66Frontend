@@ -339,7 +339,7 @@ function PreviousRuns() {
         setLccdeRequest(
             JSON.stringify({
                 "model_req": {
-                  "dataset_path": "test",
+                  "dataset_path": "CICIDS2017_sample.csv",
                   "XGB": {
                     "n_estimators": nEstimators,
                     "max_depth": maxDepth,
