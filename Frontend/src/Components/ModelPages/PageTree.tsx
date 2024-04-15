@@ -61,7 +61,7 @@ function PageTree(props : any) {
     //nEstimators, maxDepth, learningRate, minSamples, splitter
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN TREE-BASED</h1>
             <div className="testSection">
                 <label>
@@ -86,7 +86,9 @@ function PageTree(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
             </div>
-            <div>Result: {treeResponse}</div>
+            <div className="testSection">
+                <div>Result: {treeResponse}</div>
+            </div>
         </div>
     )
 }

@@ -1,18 +1,33 @@
-import React, {useState} from 'react'
+import {useState, useEffect} from 'react'
 import axios from 'axios'
+import '../CSS/Model.css'
 
 function PageLCCDE(props : any) {
     /*Props:
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const[lccdeResponse, setLccdeResponse] = useState();
-    const[nEstimators, setEstimators] = useState('');
-    const[maxDepth, setMaxDepth] = useState('');
-    const[learningRate, setLearningRate] = useState('');
-    const[numIterations, setNumIterations] = useState('');
-    const[numLeaves, setNumLeaves] = useState('');
-    const[boostingType, setBoostingType] = useState('');
+    const[lccdeResponse, setLccdeResponse] = useState(props.result || "");
+    const[nEstimators, setEstimators] = useState(props.nEstimators || "");
+    const[maxDepth, setMaxDepth] = useState(props.maxDepth || "");
+    const[learningRate, setLearningRate] = useState(props.learningRate || "");
+    const[numIterations, setNumIterations] = useState(props.numIterations || "");
+    const[numLeaves, setNumLeaves] = useState(props.numLeaves || "");
+    const[boostingType, setBoostingType] = useState(props.boostingType || "");
+
+
+    //useEffect, when any of the variables change send to parent, 
+    //this is so parameters can be used to make a new run in comparison mode
+    const exportParams = (nEstimators:any, maxDepth:any, learningRate:any, numIterations:any, numLeaves:any, boostingType:any) => {
+        if (props.sendDataToParent)
+            {
+                props.sendDataToParent(nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType)
+            }
+    }
+    useEffect(() => {
+        exportParams(nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType);
+    }, 
+    [nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType])
 
     const sendLCCDEParams = async () => {
         try {
@@ -31,8 +46,7 @@ function PageLCCDE(props : any) {
     const generateJSON = () => {
         return JSON.stringify({
             model_req: {
-                //dataset_name: props.dataset, temp until the right thing can be sent
-                dataset_path: "CICIDS2017_sample_km.csv",
+                dataset_path: props.dataset,
                 XGB: {
                     n_estimators: nEstimators,
                     max_depth: maxDepth,
@@ -56,7 +70,7 @@ function PageLCCDE(props : any) {
 
     return(
         // TODO: change input types (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN LCCDE</h1>
             <div className="testSection">
                 <label>
@@ -83,9 +97,13 @@ function PageLCCDE(props : any) {
                     Boosting Type:
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
-                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
+                {props.runnable ? (<button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>)
+                : (<></>)}
+                
             </div>
-            <div>Result: {lccdeResponse}</div>
+            <div className="testSection">
+                <div className="result">Result: {lccdeResponse}</div>
+            </div>
         </div>
     )
 }

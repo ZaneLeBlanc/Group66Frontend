@@ -6,12 +6,42 @@ import PreviousRunCard from './PreviousRunCard'
 import './CSS/PreviousRuns.css'
 import axios from 'axios';
 import moment from 'moment';
+import PageLCCDE from './ModelPages/PageLCCDE';
+
 
 
 function PreviousRuns() {
+    const[lccdeRequest, setLccdeRequest] = useState(`{
+        "model_req": {
+          "dataset_path": "",
+          "XGB": {
+            "n_estimators": "",
+            "max_depth": "",
+            "learning_rate": ""
+          },
+          "LightGBM": {
+            "num_iterations": "",
+            "max_depth": "",
+            "learning_rate": "",
+            "num_leaves": "",
+            "boosting_type": ""
+          },
+          "CatBoost": {
+            "n_estimators": "",
+            "max_depth": "",
+            "learning_rate": ""
+          }
+        }
+      }`);
 
     const [flowStarted, setFlowStarted] = useState(false);
-    const [selectedId, setSelectedId] = useState("-1");
+    const [comparisonMode, setComparisonMode] = useState(false);
+
+    const [leftId, setLeftId] = useState("-1");
+    const [leftLCCDEdata, setLeftLCCDEdata] = useState<any>();
+    const [rightId, setRightId] = useState("-1");
+    const [rightLCCDEdata, setRightLCCDEdata] = useState<any>();
+
     const [runsData, setRunsData] = useState<any[]>([]);
 
     const [filterDate, setFilterDate] = useState<any>();
@@ -19,24 +49,15 @@ function PreviousRuns() {
     const [filterID, setFilterID] = useState<any>();
     const [filterModel, setFilterModel] = useState<any>();
 
-    
-    const [previousRunCards, setPreviousRunCards] = useState<any[]>([
-        //placeholder data if the fetch request fails
-        { 
-            isSelected: false, 
-            model: "LCCDE", 
-            f1: "0.99", 
-            run_ID: "2891", 
-            date: "3/18/2024 @12:04pm" 
-        }
-        
-    
-    ]);
+    const [previousRunCards, setPreviousRunCards] = useState<any[]>([]);
     const [filteredPreviousRunCards, setFilteredPreviousRunCards] = useState<any[]>([]);
 
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
         setFlowStarted(true); 
+
+        //if comparing, go back to just viewing one record
+        setComparisonMode(false);
     
         // Create updated Sidebar cards array
         var newNewArray = [];
@@ -47,7 +68,7 @@ function PreviousRuns() {
                 return item;
             }
             //uncolor last if not initial color:
-            if (item.run_ID === selectedId) {
+            if (item.run_ID === leftId) {
                 item.isSelected = false;
                 return item;
             }
@@ -56,13 +77,29 @@ function PreviousRuns() {
         newNewArray.push(newArray);
         
         // Update the state with the new array
-        setSelectedId(newSelectedId); 
+        setLeftId(newSelectedId);
+        retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
         setFilteredPreviousRunCards(newNewArray);
     };
 
     // Retrieve all previous runs data
-    //use effect makes this only run once
     useEffect(() => {
+      fetchData();
+    }, []);
+    
+    useEffect(() => {
+        retrieveDataWithId(rightId, false);
+    }, [rightId])
+
+    useEffect(() => {
+        retrieveDataWithId(leftId, true);
+    }, [leftId])
+
+    //Runs handle filter whenever a change is made to any of the filter variables
+    useEffect(() => {
+        handleFilter();
+    }, [filterDate, filterID, filterModel, filterF1, previousRunCards])
+
     const fetchData = async () => {
         // collect the data and store as an array in React state variable
         try {
@@ -81,48 +118,15 @@ function PreviousRuns() {
     
             //array is created, put it in the sidebar varaible array
             setPreviousRunCards(formattedData);
+            
             var tempArray = [];
             tempArray.push(formattedData);
             setFilteredPreviousRunCards(tempArray);
+
             
         } catch (error) {
           console.error('Error fetching card data:', error);
-        }
-      };
-
-      fetchData();
-
-    }, []);
-
-    // given an id's run, this function returns the JSON object from the initial data retrieval.
-    // in the future we would want to just parse the data here to pass it to a component as props
-    // I'm pretty sure this is not how to properly make a function, I think I need to use the const thing
-    function retrieveDataWithId(run_id: any) {
-        //find the object in the array with the correct ID
-        for(var i = 0; i < runsData.length; i++)
-            {
-                if(runsData[i].id.toString() === run_id)
-                {
-                    var theString = JSON.stringify(runsData[i]);
-                    //console.log("retrieve: " + theString);
-                    return theString;
-                }
-            }
-    }
-
-    //Runs handle filter whenever a change is made to any of the filter variables
-    useEffect(() => {
-        handleFilter();
-    }, [filterDate, filterID, filterModel, filterF1])
-
-    //sets all the filter values to their defaults
-    const clearFilters = () => {
-        setFilterDate(undefined);
-        setFilterF1(0);
-        setFilterID("");
-        setFilterModel("any");
-    }
-
+        }}
 
     const handleFilter = () => {
         let newSubArray = [] //array to hold items that pass the filter
@@ -179,12 +183,11 @@ function PreviousRuns() {
         if (filterF1 != undefined)
         {
             //check each item, remove it it isn't equal to or above
-            for (var i = 0; i < newSubArray.length; i++)
-            {
-
-                if (newSubArray[i].f1 < filterF1)
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-            }
+            const filteredArr = newSubArray.filter(obj => obj.f1 > filterF1)
+            if (filteredArr.length == 0)
+                newSubArray = []
+            else
+                newSubArray = filteredArr
         }
 
         //handle Date
@@ -194,6 +197,8 @@ function PreviousRuns() {
             for (var i = 0; i < newSubArray.length; i++)
             {
                 const parsedDate = moment(newSubArray[i].date, "M-DD-YYYY", false);
+
+                //console.log("comparing:["+parsedDate.format("YYYY-MM-DD") + "] AND [" + filterDate + ']')
                 if (parsedDate.format("YYYY-MM-DD") != filterDate)
                     {
                         newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
@@ -203,8 +208,12 @@ function PreviousRuns() {
         
         newArray.push(newSubArray)
 
-        //check for valid array: in order to fix weird single empty item issue
-        if (newArray[0][0].model == "LCCDE" || newArray[0][0].model == "MTH" || newArray[0][0].model == "Tree-Based") {
+        //check for valid array: in order to fix weird single empty item issue and empty newSubArray issue
+        if (newSubArray.length == 0) //check this first so newArray[0][0].model doesn't give undefined error
+        {
+            setFilteredPreviousRunCards([])
+        }
+        else if (newArray[0][0].model == "LCCDE" || newArray[0][0].model == "MTH" || newArray[0][0].model == "Tree-Based") {
             setFilteredPreviousRunCards(newArray);
         }
         else {
@@ -212,15 +221,156 @@ function PreviousRuns() {
         }
     }
 
+    //sets all the filter values to their defaults
+    const clearFilters = () => {
+        setFilterDate(undefined);
+        setFilterF1(0);
+        setFilterID("");
+        setFilterModel("any");
+    }
+
+    const retrieveDataWithId = (run_id: any, leftSide:boolean) => {
+        //find the object in the array with the correct ID
+        if (run_id == "null")
+        {
+            run_id = runsData[runsData.length-1].id.toString()
+        }
+        for(var i = 0; i < runsData.length; i++)
+        {
+            if(runsData[i].id.toString() === run_id)
+            {
+                if (leftSide)
+                {
+
+                    setLeftLCCDEdata(
+                        <PageLCCDE
+                        key={leftId}
+                        sendDataToParent={handleChildData}
+                        
+                        runnable={false}
+                        nEstimators={runsData[i].XGB.n_estimators}
+                        maxDepth={runsData[i].XGB.max_depth}
+                        learningRate={runsData[i].XGB.learning_rate}
+                        numIterations={runsData[i].LightGBM.num_iterations}
+                        numLeaves={runsData[i].LightGBM.num_leaves}
+                        boostingType={runsData[i].LightGBM.boosting_type}
+                        //This needs to be replaced with Imad's result component
+                        result={
+                            parseFloat(runsData[i].f1).toFixed(5) + " " +
+                            parseFloat(runsData[i].accuracy).toFixed(5) + " " + 
+                            parseFloat(runsData[i].precision).toFixed(5) + " " + 
+                            parseFloat(runsData[i].recall).toFixed(5) + " " +
+                            parseFloat(runsData[i].execution_time).toFixed(5) + " " +
+                            runsData[i].heatmap
+                        }
+                        />
+                    )
+                }
+                else
+                {
+                    setRightLCCDEdata(
+                        <PageLCCDE
+                        key={rightId}
+                        sendDataToParent={handleChildData}
+    
+                        runnable={false}
+                        nEstimators={runsData[i].XGB.n_estimators}
+                        maxDepth={runsData[i].XGB.max_depth}
+                        learningRate={runsData[i].XGB.learning_rate}
+                        numIterations={runsData[i].LightGBM.num_iterations}
+                        numLeaves={runsData[i].LightGBM.num_leaves}
+                        boostingType={runsData[i].LightGBM.boosting_type}
+                        //This needs to be replaced with Imad's result component
+                        result={
+                            parseFloat(runsData[i].f1).toFixed(5) + " " +
+                            parseFloat(runsData[i].accuracy).toFixed(5) + " " + 
+                            parseFloat(runsData[i].precision).toFixed(5) + " " + 
+                            parseFloat(runsData[i].recall).toFixed(5) + " " +
+                            parseFloat(runsData[i].execution_time).toFixed(5) + " " +
+                            runsData[i].heatmap
+                            }
+                        />
+                    )
+                }
+                
+            }
+        }
+        return
+    }
+
+    const runModifiedAndCompare = (leftSide: boolean) => {
+        //Set page state variable to be comparing
+        setComparisonMode(true);
+
+        //process leftOrRight (1 = left called run again, 2= right called run again) 
+        if (leftSide == true)
+            setRightId("-1")  //sets that side of the page to show "runnning"
+        else 
+            setLeftId("-1")
+
+        const sendLCCDEParams = async () => {
+            try {
+                //not saving response, instead just reretreiveing lccde records in order to get the params and id
+                /*const response = */await axios.put('http://localhost:5000/runLccde', {code: lccdeRequest});
+                await fetchData();
+                var largestId= -1
+
+                for (var i = 0; i< previousRunCards.length; i++)
+                {
+                    if (parseInt(previousRunCards[i].run_ID) > largestId)
+                        largestId = parseInt(previousRunCards[i].run_ID)
+                }
+
+                if (leftSide == true) 
+                    setRightId((largestId+1).toString()) //left called, so change right side
+
+                else 
+                    setLeftId((largestId+1).toString()) //right called, so change left side
+
+                } catch (error) {
+                    console.error('Error sending response: ', error);
+                }
+                }
+        sendLCCDEParams();
+    }
+
+    //lets PreviousRuns.tsx see inside PageLCCDE.tsx variables
+    const handleChildData = (nEstimators:any, maxDepth:any, learningRate:any, numIterations:any, numLeaves:any, boostingType:any) => {
+        setLccdeRequest(
+            JSON.stringify({
+                "model_req": {
+                  "dataset_path": "test",
+                  "XGB": {
+                    "n_estimators": nEstimators,
+                    "max_depth": maxDepth,
+                    "learning_rate": learningRate
+                  },
+                  "LightGBM": {
+                    "num_iterations": numIterations,
+                    "max_depth": maxDepth,
+                    "learning_rate": learningRate,
+                    "num_leaves": numLeaves,
+                    "boosting_type": boostingType
+                  },
+                  "CatBoost": {
+                    "n_estimators": nEstimators,
+                    "max_depth": maxDepth,
+                    "learning_rate": learningRate
+                  }
+                }
+              })
+        )
+    }
+
     return (
         <div className="container">
-            <div className="sidebar">
+            <div className="historySidebar">
                 <div className="filterContainer">
                     <h2>Filter</h2>
                     <label htmlFor="date">Date:</label>
                     <input type="date" id="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
 
-                    <label htmlFor="score">F1 (greater than): {filterF1}</label>
+                    <label htmlFor="score">F1 (minimum): {filterF1}</label>
                     <input type="range" id="score" min="0" max="1" step="0.001" value={filterF1} onChange={(e) => setFilterF1(e.target.value)} />
 
                     <label htmlFor="id">ID:</label>
@@ -260,10 +410,38 @@ function PreviousRuns() {
             {flowStarted ? (
                 // placeholder, here we will render a specific run's parameters and result as well as a re-run button
                 //<LCCDEParams props={} />
-                //<Result id={selectedId}/> 
-                <p style={{padding: "100px"}}>{retrieveDataWithId(selectedId)}</p>
+                //<Result id={leftId}/> 
+                <div className="record" id="left">
+                    {parseInt(leftId) > -1 ?
+                    (<>
+                        {leftLCCDEdata}
+                        <button onClick={() => runModifiedAndCompare(true)}>Run</button>
+                    </>) :
+                    (
+                        <div className="runningText">~Running~</div>
+                    )}
+                </div>
+                
             ) : (
-                <h3>Select a record to view details</h3>
+                <h3 style={{ paddingLeft:"500px" }}>Select a record to view details</h3>
+            )}
+
+            {comparisonMode ? //Render new one to the right
+            (
+                <div className="record">
+                            
+                    {parseInt(rightId) > -1 ?
+                    (<>
+                        {rightLCCDEdata}
+                        <button onClick={() => runModifiedAndCompare(false)}>Run</button>
+                    </>) : 
+                        (
+                        <div className="runningText">~Running~</div>
+                        )} 
+                </div>
+            ) : 
+            (
+                <></>
             )}
             </div>
         </div>

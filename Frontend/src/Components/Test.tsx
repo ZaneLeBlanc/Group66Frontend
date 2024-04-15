@@ -9,13 +9,13 @@ import PageTree from "./ModelPages/PageTree";
 function Test() {
 
     const[currentPage, setCurrentPage] = useState('page1');
-    const[selectedDataset, setSelectedDataset] = useState('dataset1');
+    const[selectedDataset, setSelectedDataset] = useState('CICIDS2017_sample.csv');
 
     // controls which page to render (one per model)
     const renderPage = () => {
         switch (currentPage) {
             case 'page1':
-                return <PageLCCDE dataset={selectedDataset}/>;
+                return <PageLCCDE dataset={selectedDataset} runnable={true}/>;
             case 'page2':
                 return <PageMTH dataset={selectedDataset}/>;
             case 'page3':
