@@ -1,20 +1,33 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
+import Result from '../Result'
 import '../CSS/Model.css'
+import {ring2} from 'ldrs'
 
 function PageLCCDE(props : any) {
     /*Props:
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const[lccdeResponse, setLccdeResponse] = useState(props.result || "");
+
     const[nEstimators, setEstimators] = useState(props.nEstimators || "");
     const[maxDepth, setMaxDepth] = useState(props.maxDepth || "");
     const[learningRate, setLearningRate] = useState(props.learningRate || "");
     const[numIterations, setNumIterations] = useState(props.numIterations || "");
     const[numLeaves, setNumLeaves] = useState(props.numLeaves || "");
     const[boostingType, setBoostingType] = useState(props.boostingType || "");
+    const[isLoading, setIsLoading] = useState(false);
 
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(props.result); 
+
+    ring2.register() 
 
     //useEffect, when any of the variables change send to parent, 
     //this is so parameters can be used to make a new run in comparison mode
@@ -28,17 +41,27 @@ function PageLCCDE(props : any) {
         exportParams(nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType);
     }, 
     [nEstimators, maxDepth, learningRate, numIterations, numLeaves, boostingType])
+    
+    
 
     const sendLCCDEParams = async () => {
         try {
+            //Turn loading spinner on temporarily
+            setIsLoading(true)
+
             const lccdeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runLccde', { code: lccdeRequest });
 
-            setLccdeResponse(response.data);
-            console.log("setLCCDE");
+            const objResponse = JSON.parse(response.data)
+            setResultData(objResponse.model_results);
             console.log(response);
+
+            //turn off loading spinner
+            setIsLoading(false)
+
         } catch (error) {
             console.error('Error sending response: ', error);
+            setIsLoading(false)
         }
     }
 
@@ -102,8 +125,28 @@ function PageLCCDE(props : any) {
                 
             </div>
             <div className="testSection">
-                <div className="result">Result: {lccdeResponse}</div>
+                {/*show loading spinner if loading */}
+                {isLoading ? (<l-ring-2
+                    size="40"
+                    stroke="5"
+                    stroke-length="0.25"
+                    bg-opacity="0.1"
+                    speed="0.8" 
+                    color="black" 
+                    ></l-ring-2>) 
+                : (<></>)}
+                {resultData && (
+                <Result 
+                    execution_time={resultData.execution_time} 
+                    accuracy={resultData.accuracy}
+                    precision={resultData.precision}
+                    recall={resultData.recall}
+                    f1_score={resultData.f1_score}
+                    heatmap={resultData.heatmap} //needs to be converted here to an img
+                />
+            )}
             </div>
+            
         </div>
     )
 }

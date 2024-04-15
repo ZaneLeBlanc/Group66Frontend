@@ -1,5 +1,7 @@
 import {useState} from 'react'
 import axios from 'axios'
+import {ring2} from 'ldrs'
+import Result from '../Result'
 
 function PageTree(props : any) {
     /*Props:
@@ -7,26 +9,42 @@ function PageTree(props : any) {
     */
     // usage -> props.dataset
     // const [treeRequest, setTreeRequest] = useState();
-    const [treeResponse, setTreeResponse] = useState();
     const[nEstimators, setEstimators] = useState('');
     const[maxDepth, setMaxDepth] = useState('');
     const[learningRate, setLearningRate] = useState('');
     const[minSamples, setMinSamples] = useState('')
     const[splitter, setSplitter] = useState('')
+
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(props.result); 
+
+    const[isLoading, setIsLoading] = useState(false);
     // const[numIterations, setNumIterations] = useState('');
     // const[numLeaves, setNumLeaves] = useState('');
     // const[boostingType, setBoostingType] = useState('');
 
+    ring2.register() 
+
     const sendTreeParams = async () => {
         try {
+            setIsLoading(true)
             const treeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runTree', { code: treeRequest });
 
-            setTreeResponse(response.data);
-            console.log("setTree");
+            const objResponse = JSON.parse(response.data)
+            setResultData(objResponse.model_results);
             console.log(response);
+
+            setIsLoading(false)
         } catch (error) {
             console.error('Error sending response: ', error);
+            setIsLoading(false)
         }
     }
     //nEstimators, maxDepth, learningRate, minSamples, splitter
@@ -51,8 +69,8 @@ function PageTree(props : any) {
                 },
                 ETree: { 
                     n_estimators: nEstimators,
-                    max_depth: minSamples,
-                    min_samples_split: splitter
+                    max_depth: maxDepth,
+                    min_samples_split: minSamples
             }
             }
         })
@@ -86,10 +104,30 @@ function PageTree(props : any) {
                 </label>
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
             </div>
-            <div className="testSection">
-                <div>Result: {treeResponse}</div>
+                <div className="testSection">
+                    {/*show loading spinner if loading */}
+                    {isLoading ? (<l-ring-2
+                        size="40"
+                        stroke="5"
+                        stroke-length="0.25"
+                        bg-opacity="0.1"
+                        speed="0.8" 
+                        color="black" 
+                        ></l-ring-2>) 
+                    : (<></>)}
+                    {resultData && (
+                    <Result 
+                        execution_time={resultData.execution_time} 
+                        accuracy={resultData.accuracy}
+                        precision={resultData.precision}
+                        recall={resultData.recall}
+                        f1_score={resultData.f1_score}
+                        heatmap={resultData.heatmap} //needs to be converted here to an img
+                    />
+                )}
+                </div>
+                
             </div>
-        </div>
     )
 }
 
