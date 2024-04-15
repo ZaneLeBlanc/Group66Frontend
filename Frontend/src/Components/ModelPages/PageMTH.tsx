@@ -26,11 +26,22 @@ function PageMTH(props : any) {
         }
     }
 
+    // create json generator function
+    // send following for mth
+    // {
+    //     "model_req": {
+    //         "dataset_path": "CICIDS2017_sample_km.csv",
+    //         "training_allocation" : "",
+    //         "max_features" : "",
+    //         "hpo_max_evals" : ""
+    //     }
+    // }
+
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
             <h1>RUN MTH</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <label>
                     Param1:
                 <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
@@ -43,9 +54,9 @@ function PageMTH(props : any) {
                     Param3:
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
                 </label>
-                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
-            <div className="testSection">
+            <div className="results">
+                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
                 <div>Result: {mthResponse}</div>
             </div>
         </div>

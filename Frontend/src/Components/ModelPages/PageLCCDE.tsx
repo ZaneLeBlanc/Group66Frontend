@@ -58,7 +58,7 @@ function PageLCCDE(props : any) {
         // TODO: change input types (buttons, dropdowns, etc.)
         <div className="modelPage">
             <h1>RUN LCCDE</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <label>
                 # Estimators:
                 <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
@@ -83,9 +83,9 @@ function PageLCCDE(props : any) {
                     Boosting Type:
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
-                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
             </div>
-            <div className="testSection">
+            <div className="results">
+                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
                 <div className="result">Result: {lccdeResponse}</div>
             </div>
         </div>

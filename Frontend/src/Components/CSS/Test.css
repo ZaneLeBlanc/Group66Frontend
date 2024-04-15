@@ -51,7 +51,7 @@
     background-color: black; /* color of line */
     margin-left: auto; /* shift right */
     margin-bottom: 10px; /* spacing between the line and radio buttons */
-  }
+}
   
 .emptyDiv {
     flex: 1; /* this div fills the remaining space */
