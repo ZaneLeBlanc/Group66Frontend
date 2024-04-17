@@ -70,8 +70,8 @@ const Sidebar = ({
       <div className="datasetSelection">
         <strong> Dataset Selection </strong>
         <div className="longLine"></div> {/* Line */}
-        <label>
-          Dataset 1
+        <label className="dataset-radio">
+          CICIDS2017_sample
           <input
             type="radio"
             name="dataset"
@@ -80,8 +80,8 @@ const Sidebar = ({
             onChange={handleDatasetChange}
           />
         </label>
-        <label>
-          Dataset 2
+        <label className="dataset-radio">
+          CICIDS2017_sample_km
           <input
             type="radio"
             name="dataset"

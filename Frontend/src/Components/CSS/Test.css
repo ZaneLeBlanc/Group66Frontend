@@ -40,6 +40,7 @@
     margin-top: 50%;
     margin-bottom: auto;
     text-align: right;
+    font-size: 25px;
 }
 
 .sidebar input[type="radio"] {
@@ -57,3 +58,18 @@
 .emptyDiv {
     flex: 1; /* this div fills the remaining space */
 }
+
+.dataset-radio input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFB26B; 
+    border-radius: 50%;
+    margin-right: 8px; 
+  }
+  
+  .dataset-radio input[type="radio"]:checked {
+    background-color: #FFB26B; 
+  }
+  
+  
