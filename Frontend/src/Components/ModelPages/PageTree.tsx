@@ -16,6 +16,8 @@ function PageTree(props : any) {
     const[numIterations, setNumIterations] = useState('');
     const[numLeaves, setNumLeaves] = useState('');
     const[boostingType, setBoostingType] = useState('');
+    const [splitter, setSplitter] = useState('best');
+    const [criterion, setCriterion] = useState('gini');
 
     const [resultData, setResultData] = useState<{
         execution_time: string;
@@ -56,7 +58,7 @@ function PageTree(props : any) {
                     <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
                 </label>
                 <label>
-                    <span title=": A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
+                    <span title="A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
                         Learning Rate:
                     </span>
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
@@ -79,7 +81,19 @@ function PageTree(props : any) {
                     <span title="The strategy used to choose the split at each node. Supported strategies are “best” to choose the best split and “random” to choose the best random split.">
                         Splitter:
                     </span>
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    <div className="radio-group"> 
+                        <label className="radio-container">
+                            <input type="radio" name="splitter" value="best" checked={splitter === 'best'} onChange={(e) => setSplitter(e.target.value)} />
+                            <span className="checkmark"></span> 
+                            Best
+                        </label>
+
+                        <label className="radio-container">
+                            <input type="radio" name="splitter" value="random" checked={splitter === 'random'} onChange={(e) => setSplitter(e.target.value)} />                
+                            <span className="checkmark"></span> 
+                            Random
+                        </label>
+                     </div>  
                 </label>
 
                 <div className="algorithms">Random Trees</div>
@@ -127,6 +141,23 @@ function PageTree(props : any) {
                     <span title="The function to measure the quality of a split">
                         Tree Criterion
                     </span>
+                    <div className="radio-group"> 
+                        <label className="radio-container">
+                            <input type="radio" name="criterion" value="gini" checked={criterion === 'gini'} onChange={(e) => setCriterion(e.target.value)} />
+                            <span className="checkmark"></span> 
+                            Gini
+                        </label>
+                        <label className="radio-container">
+                            <input type="radio" name="criterion" value="entropy" checked={criterion === 'entropy'} onChange={(e) => setCriterion(e.target.value)} />                
+                            <span className="checkmark"></span> 
+                            Entropy
+                        </label>
+                        <label className="radio-container">
+                            <input type="radio" name="criterion" value="logloss" checked={criterion === 'logloss'} onChange={(e) => setCriterion(e.target.value)} />                
+                            <span className="checkmark"></span> 
+                            LogLoss
+                        </label>
+                     </div>  
                     
                 </label>
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>

@@ -10,13 +10,13 @@ h1 {
     width: 350px;
 }
 
-/* Customize default tooltip appearance if desired */
+
 [title] { 
     position: relative; 
 }
   
   [title]::after {
-    content: attr(title); /* Use the title attribute as the tooltip text */
+    content: attr(title); 
     background-color: #FFB26B; 
     visibility: hidden;
     color: black;
@@ -28,16 +28,15 @@ h1 {
     top: 120%;
     left: 120%;
     transform: translateY(-50%); 
-    opacity: 0; /* Hidden by default */
+    opacity: 0;
     transition: opacity 0.3s; 
   }
   
   [title]:hover::after { 
     visibility: visible;
-    opacity: 1; /* Visible on hover */
+    opacity: 1; 
   }
   
-
 
 .modelPage {
     padding-top: 5%;
@@ -53,3 +52,33 @@ h1 {
 .algorithms{
     margin-top: 20px;
 }
+
+
+.radio-container input[type="radio"] {
+    opacity: 0; 
+    position: absolute; 
+  }
+  
+  .radio-container .checkmark {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border-radius: 50%; 
+    border: 2px solid #ccc;
+  }
+  
+  .radio-container input[type="radio"]:checked + .checkmark {
+    background-color: #FFB26B; 
+  }
+  
+  .radio-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .radio-container {
+    margin-right: 12px;
+  }
+  
