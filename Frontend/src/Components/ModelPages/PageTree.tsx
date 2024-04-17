@@ -10,12 +10,18 @@ function PageTree(props : any) {
     // usage -> props.dataset
     const [treeRequest, setTreeRequest] = useState('and everywhere');
     const [treeResponse, setTreeResponse] = useState('');
-    const[nEstimators, setEstimators] = useState('');
-    const[maxDepth, setMaxDepth] = useState('');
+    const[xgbEstimators, setXgbEstimators] = useState('');
+    const[etEstimators, setEtEstimators] = useState('');
+    const[rtEstimators, setRtEstimators] = useState('');
+    const[xgbMaxDepth, setXgbMaxDepth] = useState('');
+    const[dtMaxDepth, setDtMaxDepth] = useState('');
+    const[rtMaxDepth, setRtMaxDepth] = useState('');
+    const[etMaxDepth, setEtMaxDepth] = useState('');
+    const[dtMinSample, setDtMinSample] = useState('');
+    const[rtMinSample, setRtMinSample] = useState('');
+    const[etMinSample, setEtMinSample] = useState('');
     const[learningRate, setLearningRate] = useState('');
     const[numIterations, setNumIterations] = useState('');
-    const[numLeaves, setNumLeaves] = useState('');
-    const[boostingType, setBoostingType] = useState('');
     const [splitter, setSplitter] = useState('best');
     const [criterion, setCriterion] = useState('gini');
 
@@ -49,19 +55,19 @@ function PageTree(props : any) {
                 <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
                         # Estimators:
                     </span>
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                <input type="text" className='paraminput' value={xgbEstimators} onChange={(e) => setXgbEstimators(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
                         Max Depth:
                     </span>
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    <input type="text" className='paraminput' value={xgbMaxDepth} onChange={(e) => setXgbMaxDepth(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
                         Learning Rate:
                     </span>
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
                 </label>
 
                 <div className="algorithms">Decision Tree</div>
@@ -69,13 +75,13 @@ function PageTree(props : any) {
                     <span data-title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
                         Max Depth:
                     </span>
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                <input type="text" className='paraminput' value={dtMaxDepth} onChange={(e) => setDtMaxDepth(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The minimum number of samples required to split an internal node.">
                         Min Samples:
                     </span>
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    <input type="text" className='paraminput' value={dtMinSample} onChange={(e) => setDtMinSample(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The strategy used to choose the split at each node. Supported strategies are “best” to choose the best split and “random” to choose the best random split.">
@@ -101,19 +107,19 @@ function PageTree(props : any) {
                     <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
                         # Estimators:
                     </span>
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                <input type="text" className='paraminput' value={rtEstimators} onChange={(e) => setRtEstimators(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
                         Max Depth:
                     </span>
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    <input type="text" className='paraminput' value={rtMaxDepth} onChange={(e) => setRtMaxDepth(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The minimum number of samples required to split an internal node">
                         Min Samples:
                     </span>
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    <input type="text" className='paraminput' value={rtMinSample} onChange={(e) => setRtMinSample(e.target.value)} />
                 </label>
 
                 <div className="algorithms">Extra Tree</div>
@@ -121,19 +127,19 @@ function PageTree(props : any) {
                 <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
                         # Estimators:
                     </span>
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                <input type="text" className='paraminput' value={etEstimators} onChange={(e) => setEtEstimators(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
                         Max Depth:
                     </span>
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    <input type="text" className='paraminput' value={etMaxDepth} onChange={(e) => setEtMaxDepth(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="The minimum number of samples required to split an internal node">
                         Min Samples:
                     </span>
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    <input type="text" className='paraminput' value={etMinSample} onChange={(e) => setEtMinSample(e.target.value)} />
                 </label>
 
                 <div className="algorithms"></div>

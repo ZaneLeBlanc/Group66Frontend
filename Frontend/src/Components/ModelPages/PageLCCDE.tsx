@@ -15,7 +15,6 @@ function PageLCCDE(props : any) {
     const[numIterations, setNumIterations] = useState('');
     const[numLeaves, setNumLeaves] = useState('');
     const[boostingType, setBoostingType] = useState('');
-    const [showTooltip, setShowTooltip] = useState(null); 
     const [resultData, setResultData] = useState<{
         execution_time: string;
         accuracy: string;
