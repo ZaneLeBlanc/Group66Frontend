@@ -86,7 +86,7 @@ function PageLCCDE(props : any) {
                     <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
                 </label>
                 <label>
-                <span title=": A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
+                    <span title=": A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
                         Learning Rate:
                     </span>
                     <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />

@@ -6,34 +6,38 @@ h1 {
 .paraminput {
     float: right;
     margin-left: 10px;
-    padding-left: 5px;
+    margin-bottom: 13px;
+    width: 350px;
 }
 
 /* Customize default tooltip appearance if desired */
 [title] { 
     position: relative; 
-  }
+}
   
   [title]::after {
     content: attr(title); /* Use the title attribute as the tooltip text */
     background-color: #FFB26B; 
-    color: #fff;
+    visibility: hidden;
+    color: black;
     padding: 5px;
     width: 200px;
     border-radius: 4px;
     position: absolute;
     z-index: 1;
     top: 120%;
-    left: 50%;
-    transform: translateX(-50%); 
+    left: 120%;
+    transform: translateY(-50%); 
     opacity: 0; /* Hidden by default */
     transition: opacity 0.3s; 
   }
   
   [title]:hover::after { 
+    visibility: visible;
     opacity: 1; /* Visible on hover */
   }
   
+
 
 .modelPage {
     padding-top: 5%;
@@ -44,4 +48,8 @@ h1 {
     flex-direction: column;
     padding-left: 10%;
     padding-right: 10%;
+}
+
+.algorithms{
+    margin-top: 20px;
 }
