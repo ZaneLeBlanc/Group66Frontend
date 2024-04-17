@@ -42,31 +42,31 @@ function PageMTH(props : any) {
             <h1>RUN MTH</h1>
             <div className="testSection">
                 <label>
-                <span title="The number of nodes or machines used in a distributed training setup where the model is trained across multiple systems to speed up the process.">
+                <span data-title="The number of nodes or machines used in a distributed training setup where the model is trained across multiple systems to speed up the process.">
                         Clusters:
                     </span>
                 <input type="text" className='paraminput' value={cluster} onChange={(e) => setCluster(e.target.value)} />
                 </label>
                 <label>
-                    <span title="The number of data samples processed in one iteration during the model training process. A larger batch size can speed up training but might require more memory.">
+                    <span data-title="The number of data samples processed in one iteration during the model training process. A larger batch size can speed up training but might require more memory.">
                         Batch Size:
                     </span>
                     <input type="text" className='paraminput' value={batchSize} onChange={(e) => setBatchSize(e.target.value)} />
                 </label>
                 <label>
-                    <span title="The percentage or fraction of your dataset that is assigned to each cluster or node for distributed training.">
+                    <span data-title="The percentage or fraction of your dataset that is assigned to each cluster or node for distributed training.">
                         Training Allocation:
                     </span>
                     <input type="text" className='paraminput' value={trainingAllocation} onChange={(e) => setTrainingAllocation(e.target.value)} />
                 </label>
                 <label>
-                    <span title="The specific input variables  from your dataset that are used to train the  model. Feature selection and engineering processes help determine the most relevant features.">
+                    <span data-title="The specific input variables  from your dataset that are used to train the  model. Feature selection and engineering processes help determine the most relevant features.">
                         Features:
                     </span>
                     <input type="text" className='paraminput' value={features} onChange={(e) => setFeatures(e.target.value)} />
                 </label>
                 <label>
-                    <span title="Sets the maximum number of hyperparameter combinations that will be tested during the hyperparameter optimization process.">
+                    <span data-title="Sets the maximum number of hyperparameter combinations that will be tested during the hyperparameter optimization process.">
                         HPO Max Evals:
                     </span>
                     <input type="text" className='paraminput' value={evals} onChange={(e) => setEvals(e.target.value)} />

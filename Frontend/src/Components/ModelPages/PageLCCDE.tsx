@@ -74,37 +74,37 @@ function PageLCCDE(props : any) {
             <h1>RUN LCCDE</h1>
             <div className="testSection">
                 <label>
-                    <span title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
+                    <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
                         # Estimators:
                     </span>
                     <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
                 </label>
                 <label>
-                    <span title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
+                    <span data-title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
                         Max depth:
                     </span>
                     <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
                 </label>
                 <label>
-                    <span title=": A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
+                    <span data-title="A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
                         Learning Rate:
                     </span>
                     <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
                 </label>
                 <label>
-                    <span title="The number of boosting rounds performed.">
+                    <span data-title="The number of boosting rounds performed.">
                         # Iterations:
                     </span>
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
                 </label>
                 <label>
-                     <span title="The maximum number of leaves in each decision tree.">
+                     <span data-title="The maximum number of leaves in each decision tree.">
                         # Leaves:
                     </span>
                     <input type="text" className='paraminput' value={numLeaves} onChange={(e) => setNumLeaves(e.target.value)} />
                 </label>
                 <label>
-                    <span title="The algorithm used for boosting.">
+                    <span data-title="The algorithm used for boosting.">
                         Boosting Type:
                     </span>
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />

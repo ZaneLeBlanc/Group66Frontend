@@ -11,12 +11,12 @@ h1 {
 }
 
 
-[title] { 
+[data-title] { 
     position: relative; 
 }
   
-  [title]::after {
-    content: attr(title); 
+  [data-title]::after {
+    content: attr(data-title); 
     background-color: #FFB26B; 
     visibility: hidden;
     color: black;
@@ -32,7 +32,7 @@ h1 {
     transition: opacity 0.3s; 
   }
   
-  [title]:hover::after { 
+  [data-title]:hover::after { 
     visibility: visible;
     opacity: 1; 
   }
