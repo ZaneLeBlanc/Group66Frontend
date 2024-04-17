@@ -3,6 +3,7 @@ import axios from 'axios'
 import Result from '../Result'
 import '../CSS/Model.css'
 import {ring2} from 'ldrs'
+import '../CSS/Model.css'
 
 function PageLCCDE(props : any) {
     /*Props:
@@ -16,7 +17,19 @@ function PageLCCDE(props : any) {
     const[numIterations, setNumIterations] = useState(props.numIterations || "");
     const[numLeaves, setNumLeaves] = useState(props.numLeaves || "");
     const[boostingType, setBoostingType] = useState(props.boostingType || "");
+
+    //z - these are used to see original value in previous runs page
+    const[nEstPrev] = useState(props.nEstPrev || "");
+    const[mDepPrev] = useState(props.mDepPrev || "");
+    const[lRatePrev] = useState(props.lRatePrev || "");
+    const[nIterPrev] = useState(props.nIterPrev || "");
+    const[nLeavesPrev] = useState(props.nLeavesPrev || "");
+    const[bTypePrev] = useState(props.bTypePrev || "");
+    
+
     const[isLoading, setIsLoading] = useState(false);
+
+    const [showTooltip, setShowTooltip] = useState(null);
 
     const [resultData, setResultData] = useState<{
         execution_time: string;
@@ -96,30 +109,42 @@ function PageLCCDE(props : any) {
         <div className="modelPage">
             <h1>RUN LCCDE</h1>
             <div className="testSection">
-                <label>
-                # Estimators:
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+            <label>
+                    <span title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
+                        # Estimators: {nEstPrev}
+                    </span>
+                    <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
                 </label>
                 <label>
-                    Max Depth:
+                    <span title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
+                        Max depth: {mDepPrev}
+                    </span>
                     <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
                 </label>
                 <label>
-                    Learning Rate:
+                <span title=": A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
+                        Learning Rate: {lRatePrev}
+                    </span>
                     <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
                 </label>
                 <label>
-                    # Iterations:
+                    <span title="The number of boosting rounds performed.">
+                        # Iterations: {nIterPrev}
+                    </span>
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
                 </label>
                 <label>
-                    # Leaves:
+                     <span title="The maximum number of leaves in each decision tree.">
+                        # Leaves: {nLeavesPrev}
+                    </span>
                     <input type="text" className='paraminput' value={numLeaves} onChange={(e) => setNumLeaves(e.target.value)} />
                 </label>
                 <label>
-                    Boosting Type:
+                    <span title="The algorithm used for boosting.">
+                        Boosting Type: {bTypePrev}
+                    </span>
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
-                </label>
+                    </label>
                 {props.runnable ? (<button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>)
                 : (<></>)}
                 

@@ -19,3 +19,51 @@ h1 {
     padding-left: 10%;
     padding-right: 10%;
 }
+
+h1 {
+    margin-top: 0%;
+    justify-content: right;
+}
+
+.paraminput {
+    float: right;
+    margin-left: 10px;
+    padding-left: 5px;
+}
+
+/* Customize default tooltip appearance if desired */
+[title] { 
+    position: relative; 
+  }
+
+  [title]::after {
+    content: attr(title); /* Use the title attribute as the tooltip text */
+    background-color: #FFB26B; 
+    color: #fff;
+    padding: 5px;
+    width: 200px;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 1;
+    top: 120%;
+    left: 50%;
+    transform: translateX(-50%); 
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s; 
+  }
+
+  [title]:hover::after { 
+    opacity: 1; /* Visible on hover */
+  }
+
+
+.modelPage {
+    padding-top: 5%;
+}
+
+.testSection {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10%;
+    padding-right: 10%;
+}

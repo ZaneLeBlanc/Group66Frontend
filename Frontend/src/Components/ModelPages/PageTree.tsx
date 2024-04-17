@@ -20,7 +20,7 @@ function PageTree(props : any) {
         accuracy: string;
         precision: string;
         recall: string;
-        f1_score: string;
+        f1: string;
         heatmap: string;
     }>(props.result); 
 
@@ -121,7 +121,7 @@ function PageTree(props : any) {
                         accuracy={resultData.accuracy}
                         precision={resultData.precision}
                         recall={resultData.recall}
-                        f1_score={resultData.f1_score}
+                        f1_score={resultData.f1}
                         heatmap={resultData.heatmap} //needs to be converted here to an img
                     />
                 )}
