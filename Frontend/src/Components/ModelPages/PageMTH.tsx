@@ -43,9 +43,9 @@ function PageMTH(props : any) {
                     Param3:
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
                 </label>
-                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
             <div className="testSection">
+                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
                 <div>Result: {mthResponse}</div>
             </div>
         </div>

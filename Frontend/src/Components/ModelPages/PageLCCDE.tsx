@@ -83,9 +83,9 @@ function PageLCCDE(props : any) {
                     Boosting Type:
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
-                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
             </div>
             <div className="testSection">
+                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
                 <div className="result">Result: {lccdeResponse}</div>
             </div>
         </div>

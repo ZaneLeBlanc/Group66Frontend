@@ -43,9 +43,9 @@ function PageTree(props : any) {
                     Param3:
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
                 </label>
-                <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
             </div>
             <div className="testSection">
+                <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
                 <div>Result: {treeResponse}</div>
             </div>
         </div>
