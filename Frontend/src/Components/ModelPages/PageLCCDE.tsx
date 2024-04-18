@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import axios from 'axios'
+import Result from '../Result'
 import '../CSS/Model.css'
 
 function PageLCCDE(props : any) {
@@ -14,6 +15,15 @@ function PageLCCDE(props : any) {
     const[numIterations, setNumIterations] = useState('');
     const[numLeaves, setNumLeaves] = useState('');
     const[boostingType, setBoostingType] = useState('');
+    const [resultData, setResultData] = useState<{
+        execution_time: string;
+        accuracy: string;
+        precision: string;
+        recall: string;
+        f1_score: string;
+        heatmap: string;
+    }>(); 
+    
 
     const sendLCCDEParams = async () => {
         try {
@@ -21,6 +31,8 @@ function PageLCCDE(props : any) {
             const response = await axios.put('http://localhost:5000/runLccde', { code: lccdeRequest });
 
             setLccdeResponse(response.data);
+
+            setResultData(response.data.model_results);
             console.log("setLCCDE");
             console.log(response);
         } catch (error) {
@@ -56,37 +68,58 @@ function PageLCCDE(props : any) {
 
     return(
         // TODO: change input types (buttons, dropdowns, etc.)
-        <div className="modelPage">
+        <div>
             <h1>RUN LCCDE</h1>
             <div className="parameters">
                 <label>
-                # Estimators:
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                    <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
+                        # Estimators:
+                    </span>
+                    <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
                 </label>
                 <label>
-                    Max Depth:
+                    <span data-title="The maximum depth allowed for each decision tree in the model. Controls model complexity: deeper trees can model more complex interactions, but are prone to overfitting.">
+                        Max depth:
+                    </span>
                     <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
                 </label>
                 <label>
-                    Learning Rate:
+                    <span data-title="A scaling factor applied to each new tree or boosting round. A lower learning rate slows down training, potentially requiring more estimators, but can improve accuracy and reduce overfitting.">
+                        Learning Rate:
+                    </span>
                     <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
                 </label>
                 <label>
-                    # Iterations:
+                    <span data-title="The number of boosting rounds performed.">
+                        # Iterations:
+                    </span>
                     <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
                 </label>
                 <label>
-                    # Leaves:
+                     <span data-title="The maximum number of leaves in each decision tree.">
+                        # Leaves:
+                    </span>
                     <input type="text" className='paraminput' value={numLeaves} onChange={(e) => setNumLeaves(e.target.value)} />
                 </label>
                 <label>
-                    Boosting Type:
+                    <span data-title="The algorithm used for boosting.">
+                        Boosting Type:
+                    </span>
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
             </div>
             <div className="results">
                 <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
-                <div className="result">Result: {lccdeResponse}</div>
+                {resultData && (
+                    <Result 
+                        execution_time={resultData.execution_time} 
+                        accuracy={resultData.accuracy}
+                        precision={resultData.precision}
+                        recall={resultData.recall}
+                        f1_score={resultData.f1_score}
+                        heatmap={resultData.heatmap} 
+                    />
+                )}
             </div>
         </div>
     )
