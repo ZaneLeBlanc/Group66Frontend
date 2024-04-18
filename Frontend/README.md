@@ -55,13 +55,13 @@ What all the parts do
 
 This was a collaborative effort between 5 people for our senior design class at UTD. We were dubbed "Group 66" for the Spring semester of 2024. The following people were involved:
 
-- Zane LeBlanc - History
+- Zane LeBlanc - History Page Development / Re-Run Comparison Logic
 - Aaron Subichev - Test Page Styling/User Input
-- Imad Siddiqui - Front-End
-- Micaela Landauro - Back-End
-- Amy Mendiola - Back-End
-- Nhut Nguyen - Faculty Sponsor
-- Rini Patel - Teaching Assistant
+- Imad Siddiqui - User Experience
+- Micaela Landauro - Back-End thing
+- Amy Mendiola - Back-End other thing
+- Nhut Nguyen - Faculty Sponsor / Helicopter Parent
+- Rini Patel - Teaching Assistant / Grader
 
 ## MIT License
 
