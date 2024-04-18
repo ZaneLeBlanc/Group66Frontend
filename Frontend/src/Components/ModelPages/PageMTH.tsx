@@ -12,8 +12,8 @@ function PageMTH(props : any) {
     const [cluster, setCluster] = useState('');
     const [batchSize, setBatchSize] = useState('');
     const [trainingAllocation, setTrainingAllocation] = useState('');
-    const [features, setFeatures] = useState('');
-    const [evals, setEvals] = useState('');
+    const [maxFeatures, setMaxFeatures] = useState('');
+    const [hpoMaxEvals, setHpoMaxEvals] = useState('');
     const [resultData, setResultData] = useState<{
         execution_time: string;
         accuracy: string;
@@ -74,15 +74,16 @@ function PageMTH(props : any) {
                     <span data-title="The specific input variables  from your dataset that are used to train the  model. Feature selection and engineering processes help determine the most relevant features.">
                         Features:
                     </span>
-                    <input type="text" className='paraminput' value={features} onChange={(e) => setFeatures(e.target.value)} />
+                    <input type="text" className='paraminput' value={maxFeatures} onChange={(e) => setMaxFeatures(e.target.value)} />
                 </label>
                 <label>
                     <span data-title="Sets the maximum number of hyperparameter combinations that will be tested during the hyperparameter optimization process.">
                         HPO Max Evals:
                     </span>
-                    <input type="text" className='paraminput' value={evals} onChange={(e) => setEvals(e.target.value)} />
+                    <input type="text" className='paraminput' value={hpoMaxEvals} onChange={(e) => setHpoMaxEvals(e.target.value)} />
                 </label>
             </div>
+            {/* TODO: results should be parsed from response object */}
             <div className="results">
                 <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
                 <div>Result: {mthResponse}</div>

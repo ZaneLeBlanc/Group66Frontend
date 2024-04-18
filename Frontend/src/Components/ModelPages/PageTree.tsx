@@ -2,6 +2,7 @@ import {useState} from 'react'
 import axios from 'axios'
 import Result from '../Result'
 import '../CSS/Model.css'
+import { relativeTimeRounding } from 'moment';
 
 function PageTree(props : any) {
     /*Props:
@@ -51,24 +52,24 @@ function PageTree(props : any) {
             model_req: {
                 dataset_path: props.dataset,
                 XGB: {
-                    n_estimators: nEstimators,
-                    max_depth: maxDepth,
+                    n_estimators: xgbEstimators,
+                    max_depth: xgbMaxDepth,
                     learning_rate: learningRate
                 },
                 DTree: {
-                    max_depth: maxDepth,
+                    max_depth: dtMaxDepth,
                     min_samples_split: learningRate,
-                    splitter: numLeaves,
+                    splitter: splitter,
                 },
                 RTree: {
-                    n_estimators: nEstimators,
-                    max_depth: maxDepth,
-                    min_samples_split: learningRate
+                    n_estimators: rtEstimators,
+                    max_depth: rtMaxDepth,
+                    min_samples_split: rtMinSample
                 },
                 VTree: {
-                    n_estimators: nEstimators,
-                    max_depth: maxDepth,
-                    min_samples_split: learningRate
+                    n_estimators: etEstimators,
+                    max_depth: etMaxDepth,
+                    min_samples_split: etMinSample
                 }
             }
         })
