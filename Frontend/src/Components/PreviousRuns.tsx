@@ -56,6 +56,24 @@ function PreviousRuns() {
     const [previousRunCards, setPreviousRunCards] = useState<any[]>([]);
     const [filteredPreviousRunCards, setFilteredPreviousRunCards] = useState<any[]>([]);
 
+    //These store the static parameters that go next to the parameter text of a run
+    /*
+    const [leftPrevNumEst, setLeftPrevNumEst] = useState<String>("")
+    const [leftPrevMaxDep, setLeftPrevMaxDep] = useState<String>("")
+    const [leftPrevLRate, setLeftPrevLRate] = useState<String>("")
+    const [leftPrevNumIter, setLeftPrevNumIter] = useState<String>("")
+    const [leftPrevNumLeaves, setLeftPrevNumLeaves] = useState<String>("")
+    const [leftPrevBType, setLeftPrevBType] = useState<String>("")
+
+    const [rightPrevNumEst, setRightPrevNumEst] = useState<String>("")
+    const [rightPrevMaxDep, setRightPrevMaxDep] = useState<String>("")
+    const [rightPrevLRate, setRightPrevLRate] = useState<String>("")
+    const [rightPrevNumIter, setRightPrevNumIter] = useState<String>("")
+    const [rightPrevNumLeaves, setRightPrevNumLeaves] = useState<String>("")
+    const [rightPrevBType, setRightPrevBType] = useState<String>("")
+    */
+
+
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
         setFlowStarted(true); 
@@ -102,15 +120,22 @@ function PreviousRuns() {
     }, [leftId])
 
     useEffect(() => {
-    }, [rightLCCDEdata])
+    }, [rightLCCDEdata, rightLCCDEdata])
+
+    /*
+    useEffect(() => {
+    }, [leftPrevNumEst, leftPrevMaxDep, leftPrevLRate, leftPrevNumIter, leftPrevNumLeaves, leftPrevBType])
 
     useEffect(() => {
-    }, [leftLCCDEdata])
+    }, [rightPrevNumEst, rightPrevMaxDep, rightPrevLRate, rightPrevNumIter, rightPrevNumLeaves, rightPrevBType])
+    */
+
 
     //Runs handle filter whenever a change is made to any of the filter variables
     useEffect(() => {
         handleFilter();
     }, [filterDate, filterID, filterModel, filterF1, previousRunCards])
+
 
     const fetchData = async () => {
         // collect the data and store as an array in React state variable
@@ -168,34 +193,17 @@ function PreviousRuns() {
         }
 
         //handle model
-        
         if (filterModel == undefined || filterModel == "any")
         {
         }
-        else if (filterModel == "LCCDE") {
-            for (var i = 0; i < newSubArray.length; i++)
-                {
-                    const elementModel: any = newSubArray[i].model;
-                    if (elementModel != "LCCDE")
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                }
+        else{
+            const filteredArr = newSubArray.filter(obj => obj.model == filterModel)
+            if (filteredArr.length == 0)
+                newSubArray = []
+            else
+                newSubArray = filteredArr
         }
-        else if (filterModel == "MTH") {
-            for (var i = 0; i < newSubArray.length; i++)
-                {
-                    const elementModel = newSubArray[i].model;
-                    if (elementModel != "MTH")
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                }
-        }
-        else if (filterModel == "Tree-Based") {
-            for (var i = 0; i < newSubArray.length; i++)
-                {
-                    const elementModel = newSubArray[i].model;
-                    if (elementModel != "Tree-Based")
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                }
-        }
+
 
         //handle F1
         if (filterF1 != undefined)
@@ -212,16 +220,11 @@ function PreviousRuns() {
         if (!(filterDate == undefined || filterDate == ""))
         {
             //check each item, remove it it isn't target date
-            for (var i = 0; i < newSubArray.length; i++)
-            {
-                const parsedDate = moment(newSubArray[i].date, "M-DD-YYYY", false);
-
-                //console.log("comparing:["+parsedDate.format("YYYY-MM-DD") + "] AND [" + filterDate + ']')
-                if (parsedDate.format("YYYY-MM-DD") != filterDate)
-                    {
-                        newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                    }
-            }
+            const filteredArr = newSubArray.filter(obj => moment(obj.date, "M-DD-YYYY", false).format("YYYY-MM-DD") == filterDate)
+            if (filteredArr.length == 0)
+                newSubArray = []
+            else
+                newSubArray = filteredArr
         }
         
         newArray.push(newSubArray)
@@ -258,30 +261,55 @@ function PreviousRuns() {
         {
             if(runsData[i].id.toString() === run_id)
             {
+                
+
                 if (leftSide)
                 {
+                    /*
+                    setLeftPrevNumEst('(' + runsData[i].XGB.n_estimators.toString() + ')')
+                    setLeftPrevMaxDep('(' +runsData[i].XGB.max_depth.toString()+ ')')
+                    setLeftPrevLRate('(' +runsData[i].XGB.learning_rate.toString()+ ')')
+                    setLeftPrevNumIter('(' +runsData[i].LightGBM.num_iterations.toString()+ ')')
+                    setLeftPrevNumLeaves('(' +runsData[i].LightGBM.num_leaves.toString()+ ')')
+                    setLeftPrevBType('(' +runsData[i].LightGBM.boosting_type.toString()+ ')')
+                    */
+
                     let newComponent = <PageLCCDE
                         key={leftId}
                         sendDataToParent={handleChildData}
                         className="pageElement"
-                        
                         runnable={false}
+
+                        //Set Permanent parentesis numbers in state and pass as props
+                        
+                        
+
+                        nEstPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
+                        mDepPrev = {'(' +runsData[i].XGB.max_depth.toString()+ ')'}
+                        lRatePrev = {'(' +runsData[i].XGB.learning_rate.toString()+ ')'}
+                        nIterPrev = {'(' +runsData[i].LightGBM.num_iterations.toString()+ ')'}
+                        nLeavesPrev = {'(' +runsData[i].LightGBM.num_leaves.toString()+ ')'}
+                        bTypePrev = {'(' +runsData[i].LightGBM.boosting_type.toString()+ ')'}
+
+
+
                         nEstimators={runsData[i].XGB.n_estimators}
                         maxDepth={runsData[i].XGB.max_depth}
                         learningRate={runsData[i].XGB.learning_rate}
                         numIterations={runsData[i].LightGBM.num_iterations}
                         numLeaves={runsData[i].LightGBM.num_leaves}
                         boostingType={runsData[i].LightGBM.boosting_type}
-                        //This needs to be replaced with Imad's result component
 
                         result={{
-                            f1_score: parseFloat(runsData[i].f1).toFixed(5),
+                            f1: parseFloat(runsData[i].f1).toFixed(5),
                             accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
                             precision: parseFloat(runsData[i].precision).toFixed(5),
                             recall: parseFloat(runsData[i].recall).toFixed(5),
                             execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
                             heatmap: runsData[i].heatmap
                         }}
+
+                        
                     
                     />
                     setLeftLCCDEdata(newComponent)
@@ -289,30 +317,44 @@ function PreviousRuns() {
                 }
                 else
                 {
-                    let newComponent = <PageLCCDE
-                    key={rightId}
-                    sendDataToParent={handleChildData}
-                    className="pageElement"
+                    /*
+                    setRightPrevNumEst('(' + runsData[i].XGB.n_estimators.toString() + ')')
+                    setRightPrevMaxDep('(' +runsData[i].XGB.max_depth.toString()+ ')')
+                    setRightPrevLRate('(' +runsData[i].XGB.learning_rate.toString()+ ')')
+                    setRightPrevNumIter('(' +runsData[i].LightGBM.num_iterations.toString()+ ')')
+                    setRightPrevNumLeaves('(' +runsData[i].LightGBM.num_leaves.toString()+ ')')
+                    setRightPrevBType('(' +runsData[i].LightGBM.boosting_type.toString()+ ')')
+                    */
 
-                    runnable={false}
-                    nEstimators={runsData[i].XGB.n_estimators}
-                    maxDepth={runsData[i].XGB.max_depth}
-                    learningRate={runsData[i].XGB.learning_rate}
-                    numIterations={runsData[i].LightGBM.num_iterations}
-                    numLeaves={runsData[i].LightGBM.num_leaves}
-                    boostingType={runsData[i].LightGBM.boosting_type}
-                    //This needs to be replaced with Imad's result component
-                    result={{
-                        f1_score: parseFloat(runsData[i].f1).toFixed(5),
-                        accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
-                        precision: parseFloat(runsData[i].precision).toFixed(5),
-                        recall: parseFloat(runsData[i].recall).toFixed(5),
-                        execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                        heatmap: runsData[i].heatmap
-                    }}
+                    let newComponent = <PageLCCDE
+                        key={rightId}
+                        sendDataToParent={handleChildData}
+                        className="pageElement"
+
+                        nEstPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
+                        mDepPrev = {'(' +runsData[i].XGB.max_depth.toString()+ ')'}
+                        lRatePrev = {'(' +runsData[i].XGB.learning_rate.toString()+ ')'}
+                        nIterPrev = {'(' +runsData[i].LightGBM.num_iterations.toString()+ ')'}
+                        nLeavesPrev = {'(' +runsData[i].LightGBM.num_leaves.toString()+ ')'}
+                        bTypePrev = {'(' +runsData[i].LightGBM.boosting_type.toString()+ ')'}
+
+                        runnable={false}
+                        nEstimators={runsData[i].XGB.n_estimators}
+                        maxDepth={runsData[i].XGB.max_depth}
+                        learningRate={runsData[i].XGB.learning_rate}
+                        numIterations={runsData[i].LightGBM.num_iterations}
+                        numLeaves={runsData[i].LightGBM.num_leaves}
+                        boostingType={runsData[i].LightGBM.boosting_type}
+                        result={{
+                            f1: parseFloat(runsData[i].f1).toFixed(5),
+                            accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                            precision: parseFloat(runsData[i].precision).toFixed(5),
+                            recall: parseFloat(runsData[i].recall).toFixed(5),
+                            execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
+                            heatmap: runsData[i].heatmap
+                        }}
                     />
                     setRightLCCDEdata(newComponent)
-                    //setStaticRightLCCDEdata(newComponent)
                 }
                 
             }
@@ -327,13 +369,11 @@ function PreviousRuns() {
         
         //process leftOrRight (1 = left called run again, 2= right called run again) 
         if (leftSide == true)
-        {
             setRightId("-1")  //sets that side of the page to show "runnning"
-        }
+
         else 
-        {
             setLeftId("-1")
-        }
+        
             
 
         const sendLCCDEParams = async () => {
@@ -363,7 +403,6 @@ function PreviousRuns() {
                     console.log("handle error")
                     if (leftSide == true)
                     {
-                        console.log("setting right ID to " + 0);
                         setRightId('0')
                         setRightLCCDEdata(<p>Error Processing Run</p>)
                     }

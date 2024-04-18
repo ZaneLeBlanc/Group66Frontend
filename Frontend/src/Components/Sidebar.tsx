@@ -19,6 +19,8 @@ const Sidebar = ({
   }
 
   const handleDatasetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // TODO: do we need both here?
+    setDataset(e.target.value);
     setSelectedDataset(e.target.value);
   };
 
@@ -70,7 +72,7 @@ const Sidebar = ({
       <div className="datasetSelection">
         <strong> Dataset Selection </strong>
         <div className="longLine"></div> {/* Line */}
-        <label>
+        <label className="dataset-radio">
           CICIDS2017_sample
           <input
             type="radio"
@@ -80,7 +82,7 @@ const Sidebar = ({
             onChange={handleDatasetChange}
           />
         </label>
-        <label>
+        <label className="dataset-radio">
           CICIDS2017_sample_km
           <input
             type="radio"
