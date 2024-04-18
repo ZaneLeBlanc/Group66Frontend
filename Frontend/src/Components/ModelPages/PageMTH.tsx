@@ -8,7 +8,6 @@ function PageMTH(props : any) {
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const [mthRequest, setMthRequest] = useState('and here');
     const [mthResponse, setMthResponse] = useState('');
     const [cluster, setCluster] = useState('');
     const [batchSize, setBatchSize] = useState('');
@@ -26,7 +25,7 @@ function PageMTH(props : any) {
 
     const sendMTHParams = async () => {
         try {
-            const data = props.dataset;
+            const mthRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
 
             setMthResponse(response.data);
@@ -36,11 +35,23 @@ function PageMTH(props : any) {
         }
     }
 
+    // creates request for MTH model
+    const generateJSON = () => {
+        return JSON.stringify({
+            model_req: {
+                dataset_path: props.dataset,
+                training_allocation: trainingAllocation,
+                max_features: maxFeatures,
+                hpo_max_evals: hpoMaxEvals
+            }
+        })
+    }
+
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN MTH</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <label>
                 <span data-title="The number of nodes or machines used in a distributed training setup where the model is trained across multiple systems to speed up the process.">
                         Clusters:
@@ -71,19 +82,23 @@ function PageMTH(props : any) {
                     </span>
                     <input type="text" className='paraminput' value={evals} onChange={(e) => setEvals(e.target.value)} />
                 </label>
-                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
             </div>
-            <div className="testSection">Result:</div>
-            {resultData && (
-                <Result 
-                    execution_time={resultData.execution_time} 
-                    accuracy={resultData.accuracy}
-                    precision={resultData.precision}
-                    recall={resultData.recall}
-                    f1_score={resultData.f1_score}
-                    heatmap={resultData.heatmap} 
-                />
-            )}
+            <div className="results">
+                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
+                <div>Result: {mthResponse}</div>
+            </div>
+            <div className="testSection">Result:
+                {resultData && (
+                    <Result 
+                        execution_time={resultData.execution_time} 
+                        accuracy={resultData.accuracy}
+                        precision={resultData.precision}
+                        recall={resultData.recall}
+                        f1_score={resultData.f1_score}
+                        heatmap={resultData.heatmap} 
+                    />
+                )}
+            </div>
         </div>
     )
 }

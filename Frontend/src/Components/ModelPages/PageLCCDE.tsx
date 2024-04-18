@@ -44,8 +44,7 @@ function PageLCCDE(props : any) {
     const generateJSON = () => {
         return JSON.stringify({
             model_req: {
-                //dataset_name: props.dataset, temp until the right thing can be sent
-                dataset_path: "CICIDS2017_sample_km.csv",
+                dataset_path: props.dataset,
                 XGB: {
                     n_estimators: nEstimators,
                     max_depth: maxDepth,
@@ -71,7 +70,7 @@ function PageLCCDE(props : any) {
         // TODO: change input types (buttons, dropdowns, etc.)
         <div>
             <h1>RUN LCCDE</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <label>
                     <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
                         # Estimators:
@@ -108,19 +107,20 @@ function PageLCCDE(props : any) {
                     </span>
                     <input type="text" className='paraminput' value={boostingType} onChange={(e) => setBoostingType(e.target.value)} />
                 </label>
-                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
-                <p>Result:</p>
             </div>
-            {resultData && (
-                <Result 
-                    execution_time={resultData.execution_time} 
-                    accuracy={resultData.accuracy}
-                    precision={resultData.precision}
-                    recall={resultData.recall}
-                    f1_score={resultData.f1_score}
-                    heatmap={resultData.heatmap} 
-                />
-            )}
+            <div className="results">
+                <button className="runbt" type="button" onClick={sendLCCDEParams}>Run LCCDE</button>
+                {resultData && (
+                    <Result 
+                        execution_time={resultData.execution_time} 
+                        accuracy={resultData.accuracy}
+                        precision={resultData.precision}
+                        recall={resultData.recall}
+                        f1_score={resultData.f1_score}
+                        heatmap={resultData.heatmap} 
+                    />
+                )}
+            </div>
         </div>
     )
 }

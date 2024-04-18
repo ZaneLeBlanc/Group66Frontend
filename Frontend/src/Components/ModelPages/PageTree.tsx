@@ -35,7 +35,7 @@ function PageTree(props : any) {
     }>(); 
     const sendTreeParams = async () => {
         try {
-            const data = props.dataset;
+            const treeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
             setTreeResponse(response.data);
@@ -45,11 +45,40 @@ function PageTree(props : any) {
         }
     }
 
+    // creates request for Tree model
+    const generateJSON = () => {
+        return JSON.stringify({
+            model_req: {
+                dataset_path: props.dataset,
+                XGB: {
+                    n_estimators: nEstimators,
+                    max_depth: maxDepth,
+                    learning_rate: learningRate
+                },
+                DTree: {
+                    max_depth: maxDepth,
+                    min_samples_split: learningRate,
+                    splitter: numLeaves,
+                },
+                RTree: {
+                    n_estimators: nEstimators,
+                    max_depth: maxDepth,
+                    min_samples_split: learningRate
+                },
+                VTree: {
+                    n_estimators: nEstimators,
+                    max_depth: maxDepth,
+                    min_samples_split: learningRate
+                }
+            }
+        })
+    }
+
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN TREE-BASED</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <div>XGBoost</div>
                 <label>
                 <span data-title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
@@ -166,21 +195,23 @@ function PageTree(props : any) {
                      </div>  
                     
                 </label>
+            </div>
+            <div className="results">
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
             </div>
-
-           <div className="testSection">Result: </div>
-           {resultData && (
-                <Result 
-                    execution_time={resultData.execution_time} 
-                    accuracy={resultData.accuracy}
-                    precision={resultData.precision}
-                    recall={resultData.recall}
-                    f1_score={resultData.f1_score}
-                    heatmap={resultData.heatmap} 
-                />
-            )}
-        </div>
+            <div className="results">Result:
+            {resultData && (
+                    <Result 
+                        execution_time={resultData.execution_time} 
+                        accuracy={resultData.accuracy}
+                        precision={resultData.precision}
+                        recall={resultData.recall}
+                        f1_score={resultData.f1_score}
+                        heatmap={resultData.heatmap} 
+                    />
+                )}
+            </div>
+            </div>
     )
 }
 

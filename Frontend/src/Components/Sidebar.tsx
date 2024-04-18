@@ -11,7 +11,7 @@ const Sidebar = ({
 }) => {
 
   const [selectedPage, setSelectedPage] = useState('page1');
-  const [selectedDataset, setSelectedDataset] = useState('dataset1');
+  const [selectedDataset, setSelectedDataset] = useState('CICIDS2017_sample.csv');
 
   const handlePageClick = (page: string) => {
     setPage(page);
@@ -19,6 +19,8 @@ const Sidebar = ({
   }
 
   const handleDatasetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // TODO: do we need both here?
+    setDataset(e.target.value);
     setSelectedDataset(e.target.value);
   };
 
@@ -75,8 +77,8 @@ const Sidebar = ({
           <input
             type="radio"
             name="dataset"
-            value="dataset1"
-            checked={selectedDataset === 'dataset1'} // check if selectedDataset is 'dataset1'
+            value="CICIDS2017_sample.csv"
+            checked={selectedDataset === 'CICIDS2017_sample.csv'} // check if selectedDataset is 'CICIDS2017_sample.csv'
             onChange={handleDatasetChange}
           />
         </label>
@@ -85,8 +87,8 @@ const Sidebar = ({
           <input
             type="radio"
             name="dataset"
-            value="dataset2"
-            checked={selectedDataset === 'dataset2'}
+            value="CICIDS2017_sample_km.csv"
+            checked={selectedDataset === 'CICIDS2017_sample_km.csv'} // check if selectedDataset is 'CICIDS2017_sample_km.csv'
             onChange={handleDatasetChange}
           />
         </label>
