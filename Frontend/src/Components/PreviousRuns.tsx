@@ -193,34 +193,17 @@ function PreviousRuns() {
         }
 
         //handle model
-        
         if (filterModel == undefined || filterModel == "any")
         {
         }
-        else if (filterModel == "LCCDE") {
-            for (var i = 0; i < newSubArray.length; i++)
-                {
-                    const elementModel: any = newSubArray[i].model;
-                    if (elementModel != "LCCDE")
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                }
+        else{
+            const filteredArr = newSubArray.filter(obj => obj.model == filterModel)
+            if (filteredArr.length == 0)
+                newSubArray = []
+            else
+                newSubArray = filteredArr
         }
-        else if (filterModel == "MTH") {
-            for (var i = 0; i < newSubArray.length; i++)
-                {
-                    const elementModel = newSubArray[i].model;
-                    if (elementModel != "MTH")
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                }
-        }
-        else if (filterModel == "Tree-Based") {
-            for (var i = 0; i < newSubArray.length; i++)
-                {
-                    const elementModel = newSubArray[i].model;
-                    if (elementModel != "Tree-Based")
-                    newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                }
-        }
+
 
         //handle F1
         if (filterF1 != undefined)
@@ -237,16 +220,11 @@ function PreviousRuns() {
         if (!(filterDate == undefined || filterDate == ""))
         {
             //check each item, remove it it isn't target date
-            for (var i = 0; i < newSubArray.length; i++)
-            {
-                const parsedDate = moment(newSubArray[i].date, "M-DD-YYYY", false);
-
-                //console.log("comparing:["+parsedDate.format("YYYY-MM-DD") + "] AND [" + filterDate + ']')
-                if (parsedDate.format("YYYY-MM-DD") != filterDate)
-                    {
-                        newSubArray = [newSubArray.slice(0, i), ...newSubArray.slice(i + 1)]
-                    }
-            }
+            const filteredArr = newSubArray.filter(obj => moment(obj.date, "M-DD-YYYY", false).format("YYYY-MM-DD") == filterDate)
+            if (filteredArr.length == 0)
+                newSubArray = []
+            else
+                newSubArray = filteredArr
         }
         
         newArray.push(newSubArray)
@@ -323,7 +301,7 @@ function PreviousRuns() {
                         boostingType={runsData[i].LightGBM.boosting_type}
 
                         result={{
-                            f1_score: parseFloat(runsData[i].f1).toFixed(5),
+                            f1: parseFloat(runsData[i].f1).toFixed(5),
                             accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
                             precision: parseFloat(runsData[i].precision).toFixed(5),
                             recall: parseFloat(runsData[i].recall).toFixed(5),
@@ -368,7 +346,7 @@ function PreviousRuns() {
                         numLeaves={runsData[i].LightGBM.num_leaves}
                         boostingType={runsData[i].LightGBM.boosting_type}
                         result={{
-                            f1_score: parseFloat(runsData[i].f1).toFixed(5),
+                            f1: parseFloat(runsData[i].f1).toFixed(5),
                             accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
                             precision: parseFloat(runsData[i].precision).toFixed(5),
                             recall: parseFloat(runsData[i].recall).toFixed(5),
