@@ -6,18 +6,14 @@ function PageMTH(props : any) {
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const [mthRequest, setMthRequest] = useState('and here');
     const [mthResponse, setMthResponse] = useState('');
-    const[nEstimators, setEstimators] = useState('');
-    const[maxDepth, setMaxDepth] = useState('');
-    const[learningRate, setLearningRate] = useState('');
-    const[numIterations, setNumIterations] = useState('');
-    const[numLeaves, setNumLeaves] = useState('');
-    const[boostingType, setBoostingType] = useState('');
+    const[trainingAllocation, setTrainingAllocation] = useState('');
+    const[maxFeatures, setMaxFeatures] = useState('');
+    const[hpoMaxEvals, setHpoMaxEvals] = useState('');
 
     const sendMTHParams = async () => {
         try {
-            const data = props.dataset;
+            const mthRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
 
             setMthResponse(response.data);
@@ -26,25 +22,37 @@ function PageMTH(props : any) {
         }
     }
 
+    // creates request for MTH model
+    const generateJSON = () => {
+        return JSON.stringify({
+            model_req: {
+                dataset_path: props.dataset,
+                training_allocation: trainingAllocation,
+                max_features: maxFeatures,
+                hpo_max_evals: hpoMaxEvals
+            }
+        })
+    }
+
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
             <h1>RUN MTH</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <label>
-                    Param1:
-                <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
+                    Training Allocation:
+                <input type="text" className='paraminput' value={trainingAllocation} onChange={(e) => setTrainingAllocation(e.target.value)} />
                 </label>
                 <label>
-                    Param2:
-                    <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
+                    Max Features:
+                    <input type="text" className='paraminput' value={maxFeatures} onChange={(e) => setMaxFeatures(e.target.value)} />
                 </label>
                 <label>
-                    Param3:
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    Hpo Max. Evals:
+                    <input type="text" className='paraminput' value={hpoMaxEvals} onChange={(e) => setHpoMaxEvals(e.target.value)} />
                 </label>
             </div>
-            <div className="testSection">
+            <div className="results">
                 <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
                 <div>Result: {mthResponse}</div>
             </div>

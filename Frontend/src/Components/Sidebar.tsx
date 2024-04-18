@@ -19,6 +19,7 @@ const Sidebar = ({
   }
 
   const handleDatasetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDataset(e.target.value);
     setSelectedDataset(e.target.value);
   };
 

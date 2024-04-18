@@ -11,13 +11,13 @@ function PageTree(props : any) {
     const[nEstimators, setEstimators] = useState('');
     const[maxDepth, setMaxDepth] = useState('');
     const[learningRate, setLearningRate] = useState('');
-    const[numIterations, setNumIterations] = useState('');
     const[numLeaves, setNumLeaves] = useState('');
-    const[boostingType, setBoostingType] = useState('');
+    const[minSamplesSplit, setMinSamplesSplit] = useState('');
+    const[splitter, setSplitter] = useState('');
 
     const sendTreeParams = async () => {
         try {
-            const data = props.dataset;
+            const treeRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runTree', {code: treeRequest});
 
             setTreeResponse(response.data);
@@ -26,25 +26,62 @@ function PageTree(props : any) {
         }
     }
 
+    // creates request for Tree model
+    const generateJSON = () => {
+        return JSON.stringify({
+            model_req: {
+                dataset_path: props.dataset,
+                XGB: {
+                    n_estimators: nEstimators,
+                    max_depth: maxDepth,
+                    learning_rate: learningRate
+                },
+                DTree: {
+                    max_depth: maxDepth,
+                    min_samples_split: learningRate,
+                    splitter: numLeaves,
+                },
+                RTree: {
+                    n_estimators: nEstimators,
+                    max_depth: maxDepth,
+                    min_samples_split: learningRate
+                },
+                VTree: {
+                    n_estimators: nEstimators,
+                    max_depth: maxDepth,
+                    min_samples_split: learningRate
+                }
+            }
+        })
+    }
+
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
             <h1>RUN TREE-BASED</h1>
-            <div className="testSection">
+            <div className="parameters">
                 <label>
-                    Param1:
+                    # Estimators:
                 <input type="text" className='paraminput' value={nEstimators} onChange={(e) => setEstimators(e.target.value)} />
                 </label>
                 <label>
-                    Param2:
+                    Max Depth:
+                    <input type="text" className='paraminput' value={maxDepth} onChange={(e) => setMaxDepth(e.target.value)} />
+                </label>
+                <label>
+                    Learning Rate:
                     <input type="text" className='paraminput' value={learningRate} onChange={(e) => setLearningRate(e.target.value)} />
                 </label>
                 <label>
-                    Param3:
-                    <input type="text" className='paraminput' value={numIterations} onChange={(e) => setNumIterations(e.target.value)} />
+                    Min. Samples Split:
+                    <input type="text" className='paraminput' value={minSamplesSplit} onChange={(e) => setMinSamplesSplit(e.target.value)} />
+                </label>
+                <label>
+                    Splitter:
+                    <input type="text" className='paraminput' value={splitter} onChange={(e) => setSplitter(e.target.value)} />
                 </label>
             </div>
-            <div className="testSection">
+            <div className="results">
                 <button className="runbt" type="submit" onClick={sendTreeParams}>Run Tree</button>
                 <div>Result: {treeResponse}</div>
             </div>
