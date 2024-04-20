@@ -8,6 +8,7 @@ import axios from 'axios';
 import moment from 'moment';
 import PageLCCDE from './ModelPages/PageLCCDE';
 import { ring2 } from 'ldrs'
+import PageTree from './ModelPages/PageTree';
 
 
 
@@ -37,14 +38,40 @@ function PreviousRuns() {
         }
       }`);
 
+      const[treeRequest, setTreeRequest] = useState(`{
+        "model_req": {
+            "dataset_path": "",
+            "XGB": {
+                "n_estimators": "",
+                "max_depth": "",
+                "learning_rate": ""
+            },
+            "DTree": {
+                "max_depth": "",
+                "min_samples_split": "",
+                "splitter": "",
+            },
+            "RTree": {
+                "n_estimators": "",
+                "max_depth": "",
+                "min_samples_split": ""
+            },
+            "ETree": {
+                "n_estimators": "",
+                "max_depth": "",
+                "min_samples_split": ""
+            }
+        }
+      }`);
+
     const [flowStarted, setFlowStarted] = useState(false);
     const [comparisonMode, setComparisonMode] = useState(false);
 
     const [leftId, setLeftId] = useState("-1");
-    const [leftLCCDEdata, setLeftLCCDEdata] = useState<any>();
+    const [leftComponent, setLeftComponent] = useState<any>();
 
     const [rightId, setRightId] = useState("-1");
-    const [rightLCCDEdata, setRightLCCDEdata] = useState<any>();
+    const [rightComponent, setRightComponent] = useState<any>();
 
     const [runsData, setRunsData] = useState<any[]>([]);
 
@@ -56,22 +83,7 @@ function PreviousRuns() {
     const [previousRunCards, setPreviousRunCards] = useState<any[]>([]);
     const [filteredPreviousRunCards, setFilteredPreviousRunCards] = useState<any[]>([]);
 
-    //These store the static parameters that go next to the parameter text of a run
-    /*
-    const [leftPrevNumEst, setLeftPrevNumEst] = useState<String>("")
-    const [leftPrevMaxDep, setLeftPrevMaxDep] = useState<String>("")
-    const [leftPrevLRate, setLeftPrevLRate] = useState<String>("")
-    const [leftPrevNumIter, setLeftPrevNumIter] = useState<String>("")
-    const [leftPrevNumLeaves, setLeftPrevNumLeaves] = useState<String>("")
-    const [leftPrevBType, setLeftPrevBType] = useState<String>("")
-
-    const [rightPrevNumEst, setRightPrevNumEst] = useState<String>("")
-    const [rightPrevMaxDep, setRightPrevMaxDep] = useState<String>("")
-    const [rightPrevLRate, setRightPrevLRate] = useState<String>("")
-    const [rightPrevNumIter, setRightPrevNumIter] = useState<String>("")
-    const [rightPrevNumLeaves, setRightPrevNumLeaves] = useState<String>("")
-    const [rightPrevBType, setRightPrevBType] = useState<String>("")
-    */
+    const [ idModelMap, setIdModelMap] = useState(new Map())
 
 
     const handleSelection = (newSelectedId: any) => {
@@ -111,6 +123,7 @@ function PreviousRuns() {
       fetchData();
     }, []);
     
+    
     useEffect(() => {
         retrieveDataWithId(rightId, false);
     }, [rightId])
@@ -118,17 +131,13 @@ function PreviousRuns() {
     useEffect(() => {
         retrieveDataWithId(leftId, true);
     }, [leftId])
+    
 
     useEffect(() => {
-    }, [rightLCCDEdata, rightLCCDEdata])
+    }, [rightComponent, rightComponent])
 
-    /*
-    useEffect(() => {
-    }, [leftPrevNumEst, leftPrevMaxDep, leftPrevLRate, leftPrevNumIter, leftPrevNumLeaves, leftPrevBType])
-
-    useEffect(() => {
-    }, [rightPrevNumEst, rightPrevMaxDep, rightPrevLRate, rightPrevNumIter, rightPrevNumLeaves, rightPrevBType])
-    */
+    useEffect (() => {
+    }, [idModelMap])
 
 
     //Runs handle filter whenever a change is made to any of the filter variables
@@ -140,31 +149,52 @@ function PreviousRuns() {
     const fetchData = async () => {
         // collect the data and store as an array in React state variable
         try {
-          const response = await axios.get('http://localhost:5000/retrieveLccde');
-        let data = JSON.parse(response.data); 
-        setRunsData(data.rows);
+            const tempModelMap = new Map();
 
-        /*
-        const response2 = await axios.get('http://localhost:5000/retrieveTree')
-        let data2 = JSON.parse(response2.data);
-        console.log("data2=" + JSON.stringify(data2.rows));
-        */
+            const response = await axios.get('http://localhost:5000/retrieveLccde');
+            let data = JSON.parse(response.data); 
+            let arr1 = data.rows
+            for (let i = 0; i< arr1.length; i++)
+            {
+                //add to some sort of hashmap storing id's correlated to Tree-based
+                tempModelMap.set(arr1[i].id.toString(), "LCCDE")
+            }
+
+            const response2 = await axios.get('http://localhost:5000/retrieveTree')
+            let data2 = JSON.parse(response2.data);
+            let arr2 = data2.rows
+            for (let i = 0; i< arr2.length; i++)
+            {
+                arr1.push(arr2[i])
+                tempModelMap.set(arr2[i].id.toString(), "Tree")
+            }
+
+
+            setRunsData(arr1)
+            setIdModelMap(tempModelMap)
+  
+        
 
         //this maps each item in the data array, to be a summary card for the sidebar array. lots of ugly typescript in the top
-        const formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
+        let formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
             isSelected: false,
-            model: "LCCDE", //need to be able to detect MTH and Tree in future
+            model: tempModelMap.get(row.id.toString()), //need to be able to detect MTH and Tree in future
             f1: row.f1.toFixed(5),
             run_ID: row.id.toString(),
             date: new Date(row.run_date).toLocaleString()
-            }));
+        }));
+
+            //sort the data based on the run_id
+        formattedData = formattedData.sort((n1: { run_ID: string; }, n2: { run_ID: string; }) => 
+                (parseInt(n1.run_ID) < parseInt(n2.run_ID)) ? 1 : (parseInt(n1.run_ID) > parseInt(n2.run_ID)) ? -1 : 0)
+
     
             //array is created, put it in the sidebar varaible array
-            setPreviousRunCards(formattedData);
+        setPreviousRunCards(formattedData);
             
-            var tempArray = [];
-            tempArray.push(formattedData);
-            setFilteredPreviousRunCards(tempArray);
+        var tempArray = [];
+        tempArray.push(formattedData);
+        setFilteredPreviousRunCards(tempArray);
 
             
         } catch (error) {
@@ -234,7 +264,7 @@ function PreviousRuns() {
         {
             setFilteredPreviousRunCards([])
         }
-        else if (newArray[0][0].model == "LCCDE" || newArray[0][0].model == "MTH" || newArray[0][0].model == "Tree-Based") {
+        else if (newArray[0][0].model == "LCCDE" || newArray[0][0].model == "MTH" || newArray[0][0].model == "Tree") {
             setFilteredPreviousRunCards(newArray);
         }
         else {
@@ -262,100 +292,97 @@ function PreviousRuns() {
             if(runsData[i].id.toString() === run_id)
             {
                 
+                    let newComponent;
+                    switch(idModelMap.get(leftSide ? leftId : rightId)) {
+                        case "LCCDE":
+                        newComponent = <PageLCCDE
+                            key={leftSide ? leftId : rightId}
+                            sendDataToParent={handleChildDataLCCDE}
+                            className="pageElement"
+                            runnable={false}     
 
-                if (leftSide)
-                {
-                    /*
-                    setLeftPrevNumEst('(' + runsData[i].XGB.n_estimators.toString() + ')')
-                    setLeftPrevMaxDep('(' +runsData[i].XGB.max_depth.toString()+ ')')
-                    setLeftPrevLRate('(' +runsData[i].XGB.learning_rate.toString()+ ')')
-                    setLeftPrevNumIter('(' +runsData[i].LightGBM.num_iterations.toString()+ ')')
-                    setLeftPrevNumLeaves('(' +runsData[i].LightGBM.num_leaves.toString()+ ')')
-                    setLeftPrevBType('(' +runsData[i].LightGBM.boosting_type.toString()+ ')')
-                    */
-
-                    let newComponent = <PageLCCDE
-                        key={leftId}
-                        sendDataToParent={handleChildData}
-                        className="pageElement"
-                        runnable={false}
-
-                        //Set Permanent parentesis numbers in state and pass as props
-                        
-                        
-
-                        nEstPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
-                        mDepPrev = {'(' +runsData[i].XGB.max_depth.toString()+ ')'}
-                        lRatePrev = {'(' +runsData[i].XGB.learning_rate.toString()+ ')'}
-                        nIterPrev = {'(' +runsData[i].LightGBM.num_iterations.toString()+ ')'}
-                        nLeavesPrev = {'(' +runsData[i].LightGBM.num_leaves.toString()+ ')'}
-                        bTypePrev = {'(' +runsData[i].LightGBM.boosting_type.toString()+ ')'}
+                            nEstPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
+                            mDepPrev = {'(' +runsData[i].XGB.max_depth.toString()+ ')'}
+                            lRatePrev = {'(' +runsData[i].XGB.learning_rate.toString()+ ')'}
+                            nIterPrev = {'(' +runsData[i].LightGBM.num_iterations.toString()+ ')'}
+                            nLeavesPrev = {'(' +runsData[i].LightGBM.num_leaves.toString()+ ')'}
+                            bTypePrev = {'(' +runsData[i].LightGBM.boosting_type.toString()+ ')'}
 
 
 
-                        nEstimators={runsData[i].XGB.n_estimators}
-                        maxDepth={runsData[i].XGB.max_depth}
-                        learningRate={runsData[i].XGB.learning_rate}
-                        numIterations={runsData[i].LightGBM.num_iterations}
-                        numLeaves={runsData[i].LightGBM.num_leaves}
-                        boostingType={runsData[i].LightGBM.boosting_type}
+                            nEstimators={runsData[i].XGB.n_estimators}
+                            maxDepth={runsData[i].XGB.max_depth}
+                            learningRate={runsData[i].XGB.learning_rate}
+                            numIterations={runsData[i].LightGBM.num_iterations}
+                            numLeaves={runsData[i].LightGBM.num_leaves}
+                            boostingType={runsData[i].LightGBM.boosting_type}
 
-                        result={{
-                            f1: parseFloat(runsData[i].f1).toFixed(5),
-                            accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
-                            precision: parseFloat(runsData[i].precision).toFixed(5),
-                            recall: parseFloat(runsData[i].recall).toFixed(5),
-                            execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                            heatmap: runsData[i].heatmap
-                        }}
+                            result={{
+                                f1: parseFloat(runsData[i].f1).toFixed(5),
+                                accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                                precision: parseFloat(runsData[i].precision).toFixed(5),
+                                recall: parseFloat(runsData[i].recall).toFixed(5),
+                                execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
+                                heatmap: runsData[i].heatmap
+                            }} />
+                        break;
 
-                        
+                        case "Tree":
+                            newComponent = <PageTree
+                                key={leftId}
+                                sendDataToParent={handleChildDataTree}
+                                className="pageElement"
+                                runnable={false}     
+
+                                xgbEstimatorsPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
+                                etEstimatorsPrev = {'(' + runsData[i].ET_keys.n_estimators.toString() + ')'}
+                                rtEstimatorsPrev = {'(' + runsData[i].RT_keys.n_estimators.toString() + ')'}
+                                xgbMaxDepthPrev = {'(' + runsData[i].XGB.max_depth.toString() + ')'}
+                                dtMaxDepthPrev = {'(' + (runsData[i].DT_keys.max_depth == null) ? "(6)" : runsData[i].DT_keys.max_depth.toString() + ')'}
+                                rtMaxDepthPrev = {'(' + (runsData[i].RT_keys.max_depth == null) ? "(6)" : runsData[i].RT_keys.max_depth.toString() + ')'}
+                                etMaxDepthPrev = {'(' + (runsData[i].ET_keys.max_depth == null) ? "(6)" : runsData[i].ET_keys.max_depth.toString() + ')'}
+                                dtMinSamplePrev = {'(' + runsData[i].DT_keys.min_samples_split.toString() + ')'}
+                                rtMinSamplePrev = {'(' + runsData[i].RT_keys.min_samples_split.toString() + ')'}
+                                etMinSamplePrev = {'(' + runsData[i].ET_keys.min_samples_split.toString() + ')'}
+                                learningRatePrev = {'(' + runsData[i].XGB.learning_rate.toString() + ')'} 
+                                splitterPrev = {'(' + runsData[i].DT_keys.splitter.toString() + ')'}
+                                criterionPrev = {'(' + "null" + ')'}
+                                
+
+                                xgbEstimators = {runsData[i].XGB.n_estimators.toString()}
+                                etEstimators = {runsData[i].ET_keys.n_estimators.toString()}
+                                rtEstimators = {runsData[i].RT_keys.n_estimators.toString()}
+                                xgbMaxDepth = {runsData[i].XGB.max_depth.toString()}
+                                dtMaxDepth = {(runsData[i].DT_keys.max_depth == null) ? "6" : runsData[i].DT_keys.max_depth.toString()}
+                                rtMaxDepth = {(runsData[i].RT_keys.max_depth == null) ? "6" : runsData[i].RT_keys.max_depth.toString()}
+                                etMaxDepth = {(runsData[i].ET_keys.max_depth == null) ? "6" : runsData[i].ET_keys.max_depth.toString()}
+                                dtMinSample = {runsData[i].DT_keys.min_samples_split.toString()}
+                                rtMinSample = {runsData[i].RT_keys.min_samples_split.toString()}
+                                etMinSample = {runsData[i].ET_keys.min_samples_split.toString()}
+                                learningRate = {runsData[i].XGB.learning_rate.toString()}
+                                splitter = {runsData[i].DT_keys.splitter.toString()}
+                                criterion = {"null"}
+
+                               
+                                result={{
+                                    f1: parseFloat(runsData[i].f1).toFixed(5),
+                                    accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                                    precision: parseFloat(runsData[i].precision).toFixed(5),
+                                    recall: parseFloat(runsData[i].recall).toFixed(5),
+                                    execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
+                                    heatmap: runsData[i].heatmap
+                                }} />
+
+                            break;
+                        case "MTH":
+                            break;
+                        default:
+                            console.log("error, undetected model name, defaulted switch")
+                            break;
+                    }
+
                     
-                    />
-                    setLeftLCCDEdata(newComponent)
-                    //setStaticLeftLCCDEdata(newComponent)
-                }
-                else
-                {
-                    /*
-                    setRightPrevNumEst('(' + runsData[i].XGB.n_estimators.toString() + ')')
-                    setRightPrevMaxDep('(' +runsData[i].XGB.max_depth.toString()+ ')')
-                    setRightPrevLRate('(' +runsData[i].XGB.learning_rate.toString()+ ')')
-                    setRightPrevNumIter('(' +runsData[i].LightGBM.num_iterations.toString()+ ')')
-                    setRightPrevNumLeaves('(' +runsData[i].LightGBM.num_leaves.toString()+ ')')
-                    setRightPrevBType('(' +runsData[i].LightGBM.boosting_type.toString()+ ')')
-                    */
-
-                    let newComponent = <PageLCCDE
-                        key={rightId}
-                        sendDataToParent={handleChildData}
-                        className="pageElement"
-
-                        nEstPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
-                        mDepPrev = {'(' +runsData[i].XGB.max_depth.toString()+ ')'}
-                        lRatePrev = {'(' +runsData[i].XGB.learning_rate.toString()+ ')'}
-                        nIterPrev = {'(' +runsData[i].LightGBM.num_iterations.toString()+ ')'}
-                        nLeavesPrev = {'(' +runsData[i].LightGBM.num_leaves.toString()+ ')'}
-                        bTypePrev = {'(' +runsData[i].LightGBM.boosting_type.toString()+ ')'}
-
-                        runnable={false}
-                        nEstimators={runsData[i].XGB.n_estimators}
-                        maxDepth={runsData[i].XGB.max_depth}
-                        learningRate={runsData[i].XGB.learning_rate}
-                        numIterations={runsData[i].LightGBM.num_iterations}
-                        numLeaves={runsData[i].LightGBM.num_leaves}
-                        boostingType={runsData[i].LightGBM.boosting_type}
-                        result={{
-                            f1: parseFloat(runsData[i].f1).toFixed(5),
-                            accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
-                            precision: parseFloat(runsData[i].precision).toFixed(5),
-                            recall: parseFloat(runsData[i].recall).toFixed(5),
-                            execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                            heatmap: runsData[i].heatmap
-                        }}
-                    />
-                    setRightLCCDEdata(newComponent)
-                }
+                    leftSide ? setLeftComponent(newComponent) : setRightComponent(newComponent)
                 
             }
         }
@@ -366,14 +393,20 @@ function PreviousRuns() {
         //Set page state variable to be comparing
         setComparisonMode(true);
         console.log("runModiandcompare")
+        let modelType;
         
         //process leftOrRight (1 = left called run again, 2= right called run again) 
         if (leftSide == true)
-            setRightId("-1")  //sets that side of the page to show "runnning"
+        {
 
+            setRightId("-1")  //sets that side of the page to show "runnning"
+            modelType = idModelMap.get(leftId) == "LCCDE" ? "LCCDE" : "Tree"
+        }
         else 
+        {
             setLeftId("-1")
-        
+            modelType = idModelMap.get(rightId) == "LCCDE" ? "LCCDE" : "Tree"
+        }
             
 
         const sendLCCDEParams = async () => {
@@ -404,20 +437,60 @@ function PreviousRuns() {
                     if (leftSide == true)
                     {
                         setRightId('0')
-                        setRightLCCDEdata(<p>Error Processing Run</p>)
+                        setRightComponent(<p>Error Processing Run</p>)
                     }
                     else 
                     {
                         setLeftId('0')
-                        setLeftLCCDEdata(<p>Error Processing Run</p>)
+                        setLeftComponent(<p>Error Processing Run</p>)
                     }
                 }
+        }
+        const sendTreeParams = async () => {
+            try {
+                //not saving response, instead just reretreiveing lccde records in order to get the params and id
+                /*const response = */await axios.put('http://localhost:5000/runTree', {code: treeRequest});
+                await fetchData();
+                var largestId= -1
+
+                for (var i = 0; i< previousRunCards.length; i++)
+                {
+                    if (parseInt(previousRunCards[i].run_ID) > largestId)
+                        largestId = parseInt(previousRunCards[i].run_ID)
                 }
-        sendLCCDEParams();
+
+                if (leftSide == true) 
+                    setRightId((largestId+1).toString()) //left called, so change right side
+
+                else 
+                    setLeftId((largestId+1).toString()) //right called, so change left side
+
+
+                
+                } catch (error) {
+                    console.error('Error sending response: ', error);
+                    //handle error on rerun
+                    console.log("handle error")
+                    if (leftSide == true)
+                    {
+                        setRightId('0')
+                        setRightComponent(<p>Error Processing Run</p>)
+                    }
+                    else 
+                    {
+                        setLeftId('0')
+                        setLeftComponent(<p>Error Processing Run</p>)
+                    }
+                }
+        }
+        if (modelType == "LCCDE")
+            sendLCCDEParams();
+        else
+            sendTreeParams();
     }
 
     //lets PreviousRuns.tsx see inside PageLCCDE.tsx variables
-    const handleChildData = (nEstimators:any, maxDepth:any, learningRate:any, numIterations:any, numLeaves:any, boostingType:any) => {
+    const handleChildDataLCCDE = (nEstimators:any, maxDepth:any, learningRate:any, numIterations:any, numLeaves:any, boostingType:any) => {
         setLccdeRequest(
             JSON.stringify({
                 "model_req": {
@@ -443,6 +516,38 @@ function PreviousRuns() {
               })
         )
     }
+
+    const handleChildDataTree = (xgbEstimators:any, etEstimators:any, rtEstimators:any, xgbMaxDepth:any, dtMaxDepth:any, rtMaxDepth:any, etMaxDepth:any, dtMinSample:any, rtMinSample:any, etMinSample:any, learningRate:any, splitter:any, criterion:any) => {
+        setTreeRequest(
+            JSON.stringify({
+                "model_req": {
+                    "dataset_path": "CICIDS2017_sample.csv",
+                    "XGB": {
+                        "n_estimators": xgbEstimators,
+                        "max_depth": xgbMaxDepth,
+                        "learning_rate": learningRate
+                    },
+                    "DTree": {
+                        "max_depth": dtMaxDepth,
+                        "min_samples_split": dtMinSample,
+                        "splitter": splitter,
+                    },
+                    "RTree": {
+                        "n_estimators": rtEstimators,
+                        "max_depth": rtMaxDepth,
+                        "min_samples_split": rtMinSample
+                    },
+                    "ETree": {
+                        "n_estimators": etEstimators,
+                        "max_depth": etMaxDepth,
+                        "min_samples_split": etMinSample
+                    }
+                }
+              })
+        )
+    }
+
+
 
     return (
         <div className="container">
@@ -496,7 +601,7 @@ function PreviousRuns() {
                 <div className="record" id="left">
                     {parseInt(leftId) > -1 ?
                     (<>
-                        {leftLCCDEdata}
+                        {leftComponent}
                         <button onClick={() => runModifiedAndCompare(true)}>Run</button>
                     </>) :
                     (
@@ -524,7 +629,7 @@ function PreviousRuns() {
                             
                     {parseInt(rightId) > -1 ?
                     (<>
-                        {rightLCCDEdata}
+                        {rightComponent}
                         {rightId != '0' ? (<button onClick={() => runModifiedAndCompare(false)}>Run</button>) : <></>}
                         
                     </>) : 
@@ -537,7 +642,7 @@ function PreviousRuns() {
                                     stroke-length="0.25"
                                     bg-opacity="0.1"
                                     speed="0.9" 
-                                    color="black" 
+                                    color="white" 
                                     ></l-ring-2>
                             </>
                         )} 

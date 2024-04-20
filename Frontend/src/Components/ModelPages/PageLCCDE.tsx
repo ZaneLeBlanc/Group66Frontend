@@ -104,7 +104,7 @@ function PageLCCDE(props : any) {
 
     return(
         // TODO: change input types (buttons, dropdowns, etc.)
-        <div>
+        <div className="modelPage">
             <h1>RUN LCCDE</h1>
             <div className="parameters">
                 <label>
