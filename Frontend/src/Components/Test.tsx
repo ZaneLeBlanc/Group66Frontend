@@ -17,9 +17,9 @@ function Test() {
             case 'page1':
                 return <PageLCCDE dataset={selectedDataset} runnable={true}/>;
             case 'page2':
-                return <PageMTH dataset={selectedDataset}/>;
+                return <PageMTH dataset={selectedDataset} runnable={true}/>;
             case 'page3':
-                return <PageTree dataset={selectedDataset}/>;
+                return <PageTree dataset={selectedDataset} runnable={true}/>;
             default:
                 return null;
         }

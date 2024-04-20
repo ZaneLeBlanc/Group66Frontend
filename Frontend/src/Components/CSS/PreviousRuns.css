@@ -32,7 +32,7 @@
 }
 .page {
     padding-left: 400px;
-    background-color: white;
+    /*background-color: white;*/
     flex: 1;
     display: flex;
     justify-content: space-between;
@@ -47,6 +47,10 @@
     width: 100%;
     word-break: break-all;
     white-space: normal;
+}
+
+.page h3 {
+    color: white;
 }
 
 .filterContainer {
@@ -75,6 +79,7 @@
 .runningText {
     font-size: 30px;
     font-style: italic;
+    color: white;
 }
 
 #left  {
