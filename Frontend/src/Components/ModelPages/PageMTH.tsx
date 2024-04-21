@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import axios from 'axios'
 import Result from '../Result.tsx'
 import '../CSS/Model.css'
@@ -10,11 +10,21 @@ function PageMTH(props : any) {
     dataset: int # which dataset user selected
     */
     // usage -> props.dataset
-    const [cluster, setCluster] = useState('');
-    const [batchSize, setBatchSize] = useState('');
-    const [trainingAllocation, setTrainingAllocation] = useState('');
-    const [maxFeatures, setMaxFeatures] = useState('');
-    const [hpoMaxEvals, setHpoMaxEvals] = useState('');
+    //const [cluster, setCluster] = useState(props.cluster || '');
+    //const [batchSize, setBatchSize] = useState(props.batchSize || '');
+    const [trainingAllocation, setTrainingAllocation] = useState(props.trainingAllocation || '');
+    const [maxFeatures, setMaxFeatures] = useState(props.maxFeatures || '');
+    const [hpoMaxEvals, setHpoMaxEvals] = useState(props.hpoMaxEvals || '');
+
+    //permanent parameter placeholder (used on previous runs)
+    //const[clusterPrev] = useState(props.clusterPrev || '');
+    //const[batchSizePrev] = useState(props.batchSizePrev || '');
+    const[trainingAllocationPrev] = useState(props.trainingAllocationPrev || '');
+    const[maxFeaturesPrev] = useState(props.maxFeaturesPrev || '');
+    const[hpoMaxEvalsPrev] = useState(props.hpoMaxEvalsPrev || '');
+    
+
+
     const [resultData, setResultData] = useState<{
         execution_time: string;
         accuracy: string;
@@ -22,9 +32,22 @@ function PageMTH(props : any) {
         recall: string;
         f1: string;
         heatmap: string;
-    }>(); 
+    }>(props.result); 
 
     const [isLoading, setIsLoading] = useState(false);
+    ring2.register()
+
+    const exportParams = (/*cluster:any, batchSize:any, */trainingAllocation:any, maxFeatures:any, hpoMaxEvals:any) => {
+        if (props.sendDataToParent)
+            {
+                props.sendDataToParent(/*cluster, batchSize,*/ trainingAllocation, maxFeatures, hpoMaxEvals)
+            }
+    }
+    useEffect(() => {
+        exportParams(/*cluster, batchSize,*/ trainingAllocation, maxFeatures, hpoMaxEvals);
+    }, 
+    [/*cluster, batchSize,*/ trainingAllocation, maxFeatures, hpoMaxEvals])
+    
 
     const sendMTHParams = async () => {
         try {
@@ -58,33 +81,35 @@ function PageMTH(props : any) {
         <div className="modelPage">
             <h1>RUN MTH</h1>
             <div className="parameters">
+                {/*
                 <label>
                 <span title="The number of nodes or machines used in a distributed training setup where the model is trained across multiple systems to speed up the process.">
-                        Clusters:
+                        Clusters: {clusterPrev}
                     </span>
                 <input type="text" className='paraminput' value={cluster} onChange={(e) => setCluster(e.target.value)} />
                 </label>
                 <label>
                     <span title="The number of data samples processed in one iteration during the model training process. A larger batch size can speed up training but might require more memory.">
-                        Batch Size:
+                        Batch Size: {batchSizePrev}
                     </span>
                     <input type="text" className='paraminput' value={batchSize} onChange={(e) => setBatchSize(e.target.value)} />
                 </label>
+                */}
                 <label>
                     <span title="The percentage or fraction of your dataset that is assigned to each cluster or node for distributed training.">
-                        Training Allocation:
+                        Training Allocation: {trainingAllocationPrev}
                     </span>
                     <input type="text" className='paraminput' value={trainingAllocation} onChange={(e) => setTrainingAllocation(e.target.value)} />
                 </label>
                 <label>
                     <span title="The specific input variables  from your dataset that are used to train the  model. Feature selection and engineering processes help determine the most relevant features.">
-                        Features:
+                        Features: {maxFeaturesPrev}
                     </span>
                     <input type="text" className='paraminput' value={maxFeatures} onChange={(e) => setMaxFeatures(e.target.value)} />
                 </label>
                 <label>
                     <span title="Sets the maximum number of hyperparameter combinations that will be tested during the hyperparameter optimization process.">
-                        HPO Max Evals:
+                        HPO Max Evals: {hpoMaxEvalsPrev}
                     </span>
                     <input type="text" className='paraminput' value={hpoMaxEvals} onChange={(e) => setHpoMaxEvals(e.target.value)} />
                 </label>
