@@ -9,6 +9,7 @@ import moment from 'moment';
 import PageLCCDE from './ModelPages/PageLCCDE';
 import { ring2 } from 'ldrs'
 import PageTree from './ModelPages/PageTree';
+import PageMTH from './ModelPages/PageMTH';
 
 
 
@@ -61,6 +62,15 @@ function PreviousRuns() {
                 "max_depth": "",
                 "min_samples_split": ""
             }
+        }
+      }`);
+
+      const[mthRequest, setMthRequest] = useState(`{
+        "model_req": {
+            "dataset_path": "",
+            "training_allocation": "",
+            "max_features": "",
+            "hpo_max_evals": ""
         }
       }`);
 
@@ -168,6 +178,16 @@ function PreviousRuns() {
                 arr1.push(arr2[i])
                 tempModelMap.set(arr2[i].id.toString(), "Tree")
             }
+
+            const response3 = await axios.get('http://localhost:5000/retrieveMth')
+            let data3 = JSON.parse(response3.data);
+            let arr3 = data3.rows
+            for (let i = 0; i< arr3.length; i++)
+            {
+                arr1.push(arr3[i])
+                tempModelMap.set(arr3[i].id.toString(), "MTH")
+            }
+    
 
 
             setRunsData(arr1)
@@ -373,6 +393,34 @@ function PreviousRuns() {
 
                             break;
                         case "MTH":
+                            newComponent = <PageMTH
+                            key={leftSide ? leftId : rightId}
+                            sendDataToParent={handleChildDataMTH}
+                            className="pageElement"
+                            runnable={false}     
+
+                            //clusterPrev = {'(' + runsData[i].XGB.n_estimators.toString() + ')'}
+                            //batchSizePrev = {'(' +runsData[i].XGB.max_depth.toString()+ ')'}
+                            trainingAllocationPrev = {'(' +runsData[i].training_allocation.toString()+ ')'}
+                            maxFeaturesPrev = {'(' +runsData[i].max_features.toString()+ ')'}
+                            hpoMaxEvalsPrev = {'(' +runsData[i].hpo_max_evals.toString()+ ')'}
+
+
+
+                            //cluster={runsData[i].XGB.n_estimators}
+                            //batchSize={runsData[i].XGB.max_depth}
+                            trainingAllocation={runsData[i].training_allocation}
+                            maxFeatures={runsData[i].max_features}
+                            hpoMaxEvals={runsData[i].hpo_max_evals}
+
+                            result={{
+                                f1: parseFloat(runsData[i].f1).toFixed(5),
+                                accuracy: parseFloat(runsData[i].accuracy).toFixed(5),
+                                precision: parseFloat(runsData[i].precision).toFixed(5),
+                                recall: parseFloat(runsData[i].recall).toFixed(5),
+                                execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
+                                heatmap: runsData[i].heatmap
+                            }} />
                             break;
                         default:
                             console.log("error, undetected model name, defaulted switch")
@@ -398,12 +446,13 @@ function PreviousRuns() {
         {
 
             setRightId("-1")  //sets that side of the page to show "runnning"
-            modelType = idModelMap.get(leftId) == "LCCDE" ? "LCCDE" : "Tree"
+            modelType = idModelMap.get(leftId)
+
         }
         else 
         {
             setLeftId("-1")
-            modelType = idModelMap.get(rightId) == "LCCDE" ? "LCCDE" : "Tree"
+            modelType = idModelMap.get(rightId)
         }
             
 
@@ -481,10 +530,51 @@ function PreviousRuns() {
                     }
                 }
         }
+        const sendMTHParams = async () => {
+            try {
+                //not saving response, instead just reretreiveing lccde records in order to get the params and id
+                /*const response = */await axios.put('http://localhost:5000/runMth', {code: mthRequest});
+                await fetchData();
+                var largestId= -1
+
+                for (var i = 0; i< previousRunCards.length; i++)
+                {
+                    if (parseInt(previousRunCards[i].run_ID) > largestId)
+                        largestId = parseInt(previousRunCards[i].run_ID)
+                }
+
+                if (leftSide == true) 
+                    setRightId((largestId+1).toString()) //left called, so change right side
+
+                else 
+                    setLeftId((largestId+1).toString()) //right called, so change left side
+
+
+                
+                } catch (error) {
+                    console.error('Error sending response: ', error);
+                    //handle error on rerun
+                    console.log("handle error")
+                    if (leftSide == true)
+                    {
+                        setRightId('0')
+                        setRightComponent(<p>Error Processing Run</p>)
+                    }
+                    else 
+                    {
+                        setLeftId('0')
+                        setLeftComponent(<p>Error Processing Run</p>)
+                    }
+                }
+        }
+
+
         if (modelType == "LCCDE")
             sendLCCDEParams();
-        else
+        else if (modelType == "Tree")
             sendTreeParams();
+        else
+            sendMTHParams();
     }
 
     //lets PreviousRuns.tsx see inside PageLCCDE.tsx variables
@@ -515,7 +605,7 @@ function PreviousRuns() {
         )
     }
 
-    const handleChildDataTree = (xgbEstimators:any, etEstimators:any, rtEstimators:any, xgbMaxDepth:any, dtMaxDepth:any, rtMaxDepth:any, etMaxDepth:any, dtMinSample:any, rtMinSample:any, etMinSample:any, learningRate:any, splitter:any, criterion:any) => {
+    const handleChildDataTree = (xgbEstimators:any, etEstimators:any, rtEstimators:any, xgbMaxDepth:any, dtMaxDepth:any, rtMaxDepth:any, etMaxDepth:any, dtMinSample:any, rtMinSample:any, etMinSample:any, learningRate:any, splitter:any, /*criterion:any*/) => {
         setTreeRequest(
             JSON.stringify({
                 "model_req": {
@@ -545,6 +635,21 @@ function PreviousRuns() {
         )
     }
 
+    const handleChildDataMTH = (/*cluster:any, batchSize:any,*/ trainingAllocation:any, maxFeatures:any, hpoMaxEvals:any) => {
+        setMthRequest(
+            JSON.stringify({
+                "model_req": {
+                    "dataset_path": "CICIDS2017_sample.csv",
+                    //"batch_size": batchSize,
+                    //"cluster": cluster,
+                    "training_allocation": trainingAllocation,
+                    "max_features": maxFeatures,
+                    "hpo_max_evals": hpoMaxEvals
+                }
+              })
+        )
+    }
+
 
 
     return (
@@ -566,7 +671,7 @@ function PreviousRuns() {
                         <option value="">any</option>
                         <option value="LCCDE">LCCDE</option>
                         <option value="MTH">MTH</option>
-                        <option value="Tree-Based">Tree-Based</option>
+                        <option value="Tree">Tree-Based</option>
                     </select>
                     <button onClick={clearFilters}>Clear Filters</button>
                 </div>
@@ -611,7 +716,7 @@ function PreviousRuns() {
                                     stroke-length="0.25"
                                     bg-opacity="0.1"
                                     speed="0.9" 
-                                    color="black" 
+                                    color="white" 
                                     ></l-ring-2>
                             </>
                     )}
