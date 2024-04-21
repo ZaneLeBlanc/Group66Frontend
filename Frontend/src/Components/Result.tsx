@@ -9,6 +9,12 @@ function Result(props: {
     f1_score: string;
     heatmap: string; 
 }) {
+
+    const stringToHtml = {__html:props.heatmap};
+    const HeatMapComponent = () => {
+        return <div dangerouslySetInnerHTML={stringToHtml} />
+    }
+
     return (
         <>
         <header>
@@ -21,7 +27,8 @@ function Result(props: {
             <p className="textItem">Precision: {props.precision}</p>
             <p className="textItem">Recall: {props.recall}</p>
             <p className="textItem">F1-Score: {props.f1_score}</p>
-            <img src={props.heatmap} alt="Heatmap" /> 
+            {/* Is this how to return component? */}
+            <HeatMapComponent /> 
         </div>
         </>
     )
