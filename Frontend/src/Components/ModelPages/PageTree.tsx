@@ -23,7 +23,6 @@ function PageTree(props : any) {
     const[etMinSample, setEtMinSample] = useState(props.etMinSample || '');
     const[learningRate, setLearningRate] = useState(props.learningRate || '');
     const [splitter, setSplitter] = useState(props.splitter || 'best');
-    const [criterion, setCriterion] = useState(props.criterion || 'gini');
 
     //permanent parameter placeholder (used on previous runs)
     const[xgbEstimatorsPrev] = useState(props.xgbEstimatorsPrev || '');
@@ -38,7 +37,6 @@ function PageTree(props : any) {
     const[etMinSamplePrev] = useState(props.etMinSamplePrev || '');
     const[learningRatePrev] = useState(props.learningRatePrev || '');
     const [splitterPrev] = useState(props.splitterPrev || '');
-    const [criterionPrev] = useState(props.criterionPrev || '');
 
 
     const [resultData, setResultData] = useState<{
@@ -55,16 +53,16 @@ function PageTree(props : any) {
 
     //useEffect, when any of the variables change send to parent, 
     //this is so parameters can be used to make a new run in comparison mode
-    const exportParams = (xgbEstimators:any, etEstimators:any, rtEstimators:any, xgbMaxDepth:any, dtMaxDepth:any, rtMaxDepth:any, etMaxDepth:any, dtMinSample:any, rtMinSample:any, etMinSample:any, learningRate:any, splitter:any, criterion:any) => {
+    const exportParams = (xgbEstimators:any, etEstimators:any, rtEstimators:any, xgbMaxDepth:any, dtMaxDepth:any, rtMaxDepth:any, etMaxDepth:any, dtMinSample:any, rtMinSample:any, etMinSample:any, learningRate:any, splitter:any) => {
         if (props.sendDataToParent)
             {
-                props.sendDataToParent(xgbEstimators, etEstimators, rtEstimators, xgbMaxDepth, dtMaxDepth, rtMaxDepth, etMaxDepth, dtMinSample, rtMinSample, etMinSample, learningRate, splitter, criterion)
+                props.sendDataToParent(xgbEstimators, etEstimators, rtEstimators, xgbMaxDepth, dtMaxDepth, rtMaxDepth, etMaxDepth, dtMinSample, rtMinSample, etMinSample, learningRate, splitter)
             }
     }
     useEffect(() => {
-        exportParams(xgbEstimators, etEstimators, rtEstimators, xgbMaxDepth, dtMaxDepth, rtMaxDepth, etMaxDepth, dtMinSample, rtMinSample, etMinSample, learningRate, splitter, criterion);
+        exportParams(xgbEstimators, etEstimators, rtEstimators, xgbMaxDepth, dtMaxDepth, rtMaxDepth, etMaxDepth, dtMinSample, rtMinSample, etMinSample, learningRate, splitter);
     }, 
-    [xgbEstimators, etEstimators, rtEstimators, xgbMaxDepth, dtMaxDepth, rtMaxDepth, etMaxDepth, dtMinSample, rtMinSample, etMinSample, learningRate, splitter, criterion])
+    [xgbEstimators, etEstimators, rtEstimators, xgbMaxDepth, dtMaxDepth, rtMaxDepth, etMaxDepth, dtMinSample, rtMinSample, etMinSample, learningRate, splitter])
     
     
 
@@ -210,33 +208,9 @@ function PageTree(props : any) {
                     <input type="text" className='paraminput' value={etMinSample} onChange={(e) => setEtMinSample(e.target.value)} />
                 </label>
 
-                <div className="algorithms"></div>
-                <label>
-                    <span title="The function to measure the quality of a split">
-                        Tree Criterion {criterionPrev}
-                    </span>
-                    <div className="radio-group"> 
-                        <label className="radio-container">
-                            <input type="radio" name="criterion" value="gini" checked={criterion === 'gini'} onChange={(e) => setCriterion(e.target.value)} />
-                            <span className="checkmark"></span> 
-                            Gini
-                        </label>
-                        <label className="radio-container">
-                            <input type="radio" name="criterion" value="entropy" checked={criterion === 'entropy'} onChange={(e) => setCriterion(e.target.value)} />                
-                            <span className="checkmark"></span> 
-                            Entropy
-                        </label>
-                        <label className="radio-container">
-                            <input type="radio" name="criterion" value="logloss" checked={criterion === 'logloss'} onChange={(e) => setCriterion(e.target.value)} />                
-                            <span className="checkmark"></span> 
-                            LogLoss
-                        </label>
-                     </div>  
-                    
-                </label>
-                {props.runnable ? (<button className="runbt" type="button" onClick={sendTreeParams}>Run Tree</button>)
-                : (<></>)}
             </div>
+            {props.runnable ? (<button className="runbt" type="button" onClick={sendTreeParams}>Run Tree</button>)
+                : (<></>)}
             
             <div className="results">
             {/*show loading spinner if loading */}

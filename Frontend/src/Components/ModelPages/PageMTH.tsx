@@ -2,6 +2,8 @@ import {useState} from 'react'
 import axios from 'axios'
 import Result from '../Result.tsx'
 import '../CSS/Model.css'
+import {ring2} from 'ldrs'
+
 
 function PageMTH(props : any) {
     /*Props:
@@ -22,13 +24,20 @@ function PageMTH(props : any) {
         heatmap: string;
     }>(); 
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const sendMTHParams = async () => {
         try {
+            setIsLoading(true)
             const mthRequest = generateJSON();
             const response = await axios.put('http://localhost:5000/runMth', {code: mthRequest});
-            setResultData(response.data.model_results);
+            
+            const objResponse = JSON.parse(response.data)
+            setResultData(objResponse.model_results);
+            setIsLoading(false)
         } catch (error) {
             console.error('Error sending response: ', error);
+            setIsLoading(false)
         }
     }
 
@@ -79,13 +88,24 @@ function PageMTH(props : any) {
                     </span>
                     <input type="text" className='paraminput' value={hpoMaxEvals} onChange={(e) => setHpoMaxEvals(e.target.value)} />
                 </label>
+
+                
             </div>
-            {/* TODO: results should be parsed from response object */}
+            {props.runnable ? (<button className="runbt" type="button" onClick={sendMTHParams}>Run MTH</button>)
+                : (<></>)}
+
             <div className="results">
-                <button className="runbt" type="submit" onClick={sendMTHParams}>Run MTH</button>
-            </div>
-            <div className="testSection">Result:
-                {resultData && (
+            {/*show loading spinner if loading */}
+            {isLoading ? (<l-ring-2
+                        size="40"
+                        stroke="5"
+                        stroke-length="0.25"
+                        bg-opacity="0.1"
+                        speed="0.8" 
+                        color="black" 
+                        ></l-ring-2>) 
+                    : (<></>)}
+            {resultData && (
                     <Result 
                         execution_time={resultData.execution_time} 
                         accuracy={resultData.accuracy}

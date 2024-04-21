@@ -346,7 +346,6 @@ function PreviousRuns() {
                                 etMinSamplePrev = {'(' + runsData[i].ET_keys.min_samples_split.toString() + ')'}
                                 learningRatePrev = {'(' + runsData[i].XGB.learning_rate.toString() + ')'} 
                                 splitterPrev = {'(' + runsData[i].DT_keys.splitter.toString() + ')'}
-                                criterionPrev = {'(' + "null" + ')'}
                                 
 
                                 xgbEstimators = {runsData[i].XGB.n_estimators.toString()}
@@ -361,7 +360,6 @@ function PreviousRuns() {
                                 etMinSample = {runsData[i].ET_keys.min_samples_split.toString()}
                                 learningRate = {runsData[i].XGB.learning_rate.toString()}
                                 splitter = {runsData[i].DT_keys.splitter.toString()}
-                                criterion = {"null"}
 
                                
                                 result={{
