@@ -10,7 +10,6 @@ function Result(props: {
     recall: string;    
     f1_score: string;
     heatmap: string;
-    result: any; // don't know what type JSON.parse returns
 }) {
 
     // definitely not the best solution
@@ -64,7 +63,7 @@ function Result(props: {
         c64: string;
         c65: string;
         c66: string;
-    }>(props.result);
+    }>();
 
     const parseHeatmap = async () => {
         const objResponse = JSON.parse(props.heatmap)
@@ -84,7 +83,7 @@ function Result(props: {
             <p className="textItem">Precision: {props.precision}</p>
             <p className="textItem">Recall: {props.recall}</p>
             <p className="textItem">F1-Score: {props.f1_score}</p>
-            {/* TODO: Heatmap goes here */}
+            <Heatmap dataset={confusionMatrix}/>
         </div>
         </>
     )

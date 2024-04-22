@@ -3,7 +3,7 @@ import { HeatMapGrid } from 'react-grid-heatmap';
 
 function Heatmap (props: any) {
     /*Props:
-    dataset: int # which dataset user selected
+    dataset: JSON thing # confusion matrix 
     */
     // usage -> props.dataset
 
@@ -13,7 +13,7 @@ function Heatmap (props: any) {
         <div>
         <h2>Confusion Matrix Heatmap</h2>
         <HeatMapGrid
-            data={props.data}
+            data={props.dataset}
             xLabels={xLabels}
             yLabels={yLabels}
             cellHeight='2rem'
