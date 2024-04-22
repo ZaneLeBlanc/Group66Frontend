@@ -46,6 +46,9 @@ h1 {
   padding-top: 5%;
   flex-direction: column;
   height: 100vh;
+  
+  overflow-y: auto;
+  height: 80%;
 }
 
 .parameters {
