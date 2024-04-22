@@ -57,7 +57,7 @@ h1 {
   padding-right: 10%;
 
   margin-bottom: 5%;
-  height: 20vh;
+  height: auto;
   overflow-y: auto;
 
 }
@@ -69,7 +69,7 @@ h1 {
   padding-right: 10%;
 }
 
-// TODO: these radio buttons need to look better
+/* TODO: these radio buttons need to look better */ 
 .radio-container input[type="radio"] {
   opacity: 0; 
   position: absolute; 
