@@ -8,7 +8,7 @@ function Heatmap (props: any) {
     // usage -> props.dataset
 
     const xLabels = ['0', '1', '2', '3', '4', '5', '6']
-    const yLabels = ['Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7']
+    const yLabels = ['0', '1', '2', '3', '4', '5', '6']
     return (
         <div>
         <h2>Confusion Matrix Heatmap</h2>

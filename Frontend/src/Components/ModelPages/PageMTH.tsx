@@ -45,7 +45,6 @@ function PageMTH(props : any) {
     }
 
     return(
-        // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
             <h1>RUN MTH</h1>
             <div className="parameters">

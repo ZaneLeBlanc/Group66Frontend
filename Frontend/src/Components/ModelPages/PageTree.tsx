@@ -4,6 +4,7 @@ import Result from '../Result'
 import '../CSS/Model.css'
 import { relativeTimeRounding } from 'moment';
 import {ring2} from 'ldrs'
+import Heatmap from '../Heatmap';
 
 function PageTree(props : any) {
     /*Props:
@@ -114,7 +115,6 @@ function PageTree(props : any) {
     }
 
     return(
-        // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
             <h1>RUN TREE-BASED</h1>
             <div className="parameters">
