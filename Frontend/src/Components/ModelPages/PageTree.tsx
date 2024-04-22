@@ -2,9 +2,7 @@ import {useState, useEffect } from 'react'
 import axios from 'axios'
 import Result from '../Result'
 import '../CSS/Model.css'
-import { relativeTimeRounding } from 'moment';
 import {ring2} from 'ldrs'
-import Heatmap from '../Heatmap';
 
 function PageTree(props : any) {
     /*Props:
