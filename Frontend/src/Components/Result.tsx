@@ -13,6 +13,7 @@ function Result(props: {
 }) {
 
     // definitely not the best solution
+    // TODO: might need to pass numerical values to Heatmap rather than strings
     const [confusionMatrix, setConfusionMatrix] = useState<{
         c00: string;
         c01: string;
@@ -71,6 +72,8 @@ function Result(props: {
         setConfusionMatrix(objResponse.model_results);
     }
 
+    const heatmapData = parseHeatmap();
+
     return (
         <>
         <header>
@@ -83,33 +86,10 @@ function Result(props: {
             <p className="textItem">Precision: {props.precision}</p>
             <p className="textItem">Recall: {props.recall}</p>
             <p className="textItem">F1-Score: {props.f1_score}</p>
-            <Heatmap dataset={confusionMatrix}/>
+            <Heatmap dataset={heatmapData}/>
         </div>
         </>
     )
 }
-
-/* function Result(props: any) {
-    
-    
-    return (
-        <>
-        <header>
-            Result
-        </header>
-        <div className="resultItems">
-        <p className="textItem"> ID: {props.id}</p>
-
-        <p className="textItem">Execution Time: </p>
-        <p className="textItem">Accuracy: </p>
-        <p className="textItem">Precision: </p>
-        <p className="textItem">Recall: </p>
-        <p className="textItem">F1-Score: </p>
-        <div>Heatmap go here</div>
-        </div>
-        
-        </>
-    )
-} */
 
 export default Result
