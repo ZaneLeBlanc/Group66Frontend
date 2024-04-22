@@ -230,7 +230,8 @@ function PageTree(props : any) {
                         precision={resultData.precision}
                         recall={resultData.recall}
                         f1_score={resultData.f1}
-                        heatmap={resultData.heatmap} 
+                        heatmap={resultData.heatmap}
+                        showValidator = {false}
                     />
                 )}
             </div>

@@ -138,6 +138,7 @@ function PageMTH(props : any) {
                         recall={resultData.recall}
                         f1_score={resultData.f1}
                         heatmap={resultData.heatmap} 
+                        showValidator = {false}
                     />
                 )}
             </div>

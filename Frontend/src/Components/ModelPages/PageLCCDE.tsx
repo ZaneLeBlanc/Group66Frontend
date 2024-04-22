@@ -166,6 +166,7 @@ function PageLCCDE(props : any) {
                     recall={resultData.recall}
                     f1_score={resultData.f1}
                     heatmap={resultData.heatmap} //needs to be converted here to an img
+                    showValidator = {true}
                 />
             )}
             </div>

@@ -343,7 +343,8 @@ function PreviousRuns() {
                                 precision: parseFloat(runsData[i].precision).toFixed(5),
                                 recall: parseFloat(runsData[i].recall).toFixed(5),
                                 execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                                heatmap: runsData[i].heatmap
+                                heatmap: runsData[i].heatmap,
+                                showValidator: true
                             }} />
                         break;
 
@@ -388,7 +389,8 @@ function PreviousRuns() {
                                     precision: parseFloat(runsData[i].precision).toFixed(5),
                                     recall: parseFloat(runsData[i].recall).toFixed(5),
                                     execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                                    heatmap: runsData[i].heatmap
+                                    heatmap: runsData[i].heatmap,
+                                    showValidator: false
                                 }} />
 
                             break;
@@ -419,7 +421,8 @@ function PreviousRuns() {
                                 precision: parseFloat(runsData[i].precision).toFixed(5),
                                 recall: parseFloat(runsData[i].recall).toFixed(5),
                                 execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                                heatmap: runsData[i].heatmap
+                                heatmap: runsData[i].heatmap,
+                                showValidator: false
                             }} />
                             break;
                         default:
