@@ -105,7 +105,7 @@ function PageLCCDE(props : any) {
     return(
         // TODO: change input types (buttons, dropdowns, etc.)
         <div className="modelPage">
-            <h1>RUN LCCDE</h1>
+            <h1>LCCDE</h1>
             <div className="parameters">
                 <label>
                     <span title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">

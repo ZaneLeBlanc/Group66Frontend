@@ -28,7 +28,7 @@ function Test() {
     return (
         <div className="container">
             <Sidebar setPage={setCurrentPage} setDataset={setSelectedDataset} />
-            <div className="modelPage">{renderPage()}</div>
+            <div className="modelPageWrapper">{renderPage()}</div>
         </div>
     )
 }

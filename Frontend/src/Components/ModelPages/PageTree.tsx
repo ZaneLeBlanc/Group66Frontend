@@ -114,9 +114,9 @@ function PageTree(props : any) {
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
-            <h1>RUN TREE-BASED</h1>
+            <h1>TREE-BASED</h1>
             <div className="parameters">
-                <div>XGBoost</div>
+                <div className="algorithms" id="topAlg">XGBoost</div>
                 <label>
                 <span title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
                         # Estimators: {xgbEstimatorsPrev}
@@ -149,7 +149,7 @@ function PageTree(props : any) {
                     </span>
                     <input type="text" className='paraminput' value={dtMinSample} onChange={(e) => setDtMinSample(e.target.value)} />
                 </label>
-                <label>
+                <label className="splitterLabel">
                     <span title="The strategy used to choose the split at each node. Supported strategies are “best” to choose the best split and “random” to choose the best random split.">
                         Splitter: {splitterPrev}
                     </span>

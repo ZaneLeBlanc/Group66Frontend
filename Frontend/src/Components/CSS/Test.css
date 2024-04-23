@@ -48,6 +48,7 @@
 
 .sidebar input[type="radio"] {
     margin-right: 5px;
+    
 }
 
 .longLine {
@@ -69,10 +70,17 @@
     border: 2px solid #FFB26B; 
     border-radius: 50%;
     margin-right: 8px; 
+    
   }
   
   .dataset-radio input[type="radio"]:checked {
     background-color: #FFB26B; 
   }
-  
+
+  .dataset-radio {
+    font-size: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
   

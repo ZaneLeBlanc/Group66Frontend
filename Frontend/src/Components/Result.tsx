@@ -99,9 +99,9 @@ function Result(props: {
         {props.showValidator ? (
 
             <div className="resultItems" >
-            <h3>
+            <h2>
                 Percent Difference
-            </h3>
+            </h2>
             <p className="textItem">Execution Time: {(Math.abs(parseFloat(props.execution_time) - 168.9)/parseFloat(props.execution_time)*100).toFixed(3)}%</p>
             <p className="textItem">Accuracy: {(Math.abs(parseFloat(props.accuracy) - 0.99813)/parseFloat(props.accuracy)*100).toFixed(3)}%</p>
             <p className="textItem">Precision: {(Math.abs(parseFloat(props.precision) - 0.99814)/parseFloat(props.precision)*100).toFixed(3)}%</p>

@@ -107,7 +107,6 @@ function PreviousRuns() {
         var newNewArray = [];
         const newArray = filteredPreviousRunCards[0].map((item: { run_ID: string; isSelected: boolean; }) => {
             //color new
-            
             if (item.run_ID === newSelectedId) {
                 item.isSelected = true;
                 return item;
@@ -144,14 +143,12 @@ function PreviousRuns() {
             setRightId("-1")
             retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
         }
-        
     };
 
     // Retrieve all previous runs data
     useEffect(() => {
       fetchData();
     }, []);
-    
     
     useEffect(() => {
         retrieveDataWithId(rightId, false);
@@ -228,13 +225,9 @@ function PreviousRuns() {
                 arr1.push(arr3[i])
                 tempModelMap.set(arr3[i].id.toString(), "MTH")
             }
-    
-
 
             setRunsData(arr1)
             setIdModelMap(tempModelMap)
-  
-        
 
         //this maps each item in the data array, to be a summary card for the sidebar array. lots of ugly typescript in the top
         let formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
@@ -248,15 +241,13 @@ function PreviousRuns() {
             //sort the data based on the run_id
         formattedData = formattedData.sort((n1: { run_ID: string; }, n2: { run_ID: string; }) => 
                 (parseInt(n1.run_ID) < parseInt(n2.run_ID)) ? 1 : (parseInt(n1.run_ID) > parseInt(n2.run_ID)) ? -1 : 0)
-
     
-            //array is created, put it in the sidebar varaible array
+        //array is created, put it in the sidebar varaible array
         setPreviousRunCards(formattedData);
             
         var tempArray = [];
         tempArray.push(formattedData);
         setFilteredPreviousRunCards(tempArray);
-
             
         } catch (error) {
           console.error('Error fetching card data:', error);
@@ -275,12 +266,12 @@ function PreviousRuns() {
         }
         else{
             for (var i = 0; i < previousRunCards.length; i++)
+            {
+                if(previousRunCards[i].run_ID == filterID)
                 {
-                    if(previousRunCards[i].run_ID == filterID)
-                    {
-                        newSubArray.push(previousRunCards[i])
-                    }
+                    newSubArray.push(previousRunCards[i])
                 }
+            }
         }
 
         //handle model
@@ -526,7 +517,6 @@ function PreviousRuns() {
                 else 
                     setLeftId((largestId+1).toString()) //right called, so change left side
 
-
                 
                 } catch (error) {
                     console.error('Error sending response: ', error);
@@ -756,7 +746,7 @@ function PreviousRuns() {
                     {parseInt(leftId) > -1 ?
                     (<>
                         {leftComponent}
-                        <button onClick={() => runModifiedAndCompare(true)}>Run</button>
+                        <button className="runButton" onClick={() => runModifiedAndCompare(true)}>Run</button>
                     </>) :
                     (
                         <>
@@ -767,14 +757,14 @@ function PreviousRuns() {
                                     stroke-length="0.25"
                                     bg-opacity="0.1"
                                     speed="0.9" 
-                                    color="white" 
+                                    color="rgb(33, 53, 71)" 
                                     ></l-ring-2>
                             </>
                     )}
                 </div>
                 
             ) : (
-                <h3 style={{ paddingLeft:"500px" }}>Select a record to view details</h3>
+                <h3>(Select a record to view details)</h3>
             )}
 
             {comparisonMode ? //Render new one to the right
@@ -784,7 +774,7 @@ function PreviousRuns() {
                     {parseInt(rightId) > -1 ?
                     (<>
                         {rightComponent}
-                        {rightId != '0' ? (<button onClick={() => runModifiedAndCompare(false)}>Run</button>) : <></>}
+                        {rightId != '0' ? (<button className="runButton" onClick={() => runModifiedAndCompare(false)}>Run</button>) : <></>}
                         
                     </>) : 
                         (
@@ -796,7 +786,7 @@ function PreviousRuns() {
                                     stroke-length="0.25"
                                     bg-opacity="0.1"
                                     speed="0.9" 
-                                    color="white" 
+                                    color="rgb(33, 53, 71)" 
                                     ></l-ring-2>
                             </>
                         )} 
