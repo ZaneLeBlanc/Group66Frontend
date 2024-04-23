@@ -149,16 +149,19 @@ function PageLCCDE(props : any) {
                 : (<></>)}
             <div className="testSection">
                 {/*show loading spinner if loading */}
-                {isLoading ? (<l-ring-2
+                {isLoading ? (<div style={{paddingTop: "20px"}}> <l-ring-2
                     size="40"
                     stroke="5"
                     stroke-length="0.25"
                     bg-opacity="0.1"
                     speed="0.8" 
                     color="black" 
-                    ></l-ring-2>) 
+                    
+
+                    ></l-ring-2>
+                    </div>) 
                 : (<></>)}
-                {resultData && (
+                {!isLoading && resultData && (
                 <Result 
                     execution_time={resultData.execution_time} 
                     accuracy={resultData.accuracy}
