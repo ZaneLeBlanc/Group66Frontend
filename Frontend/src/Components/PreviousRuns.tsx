@@ -11,8 +11,6 @@ import { ring2 } from 'ldrs'
 import PageTree from './ModelPages/PageTree';
 import PageMTH from './ModelPages/PageMTH';
 
-
-
 function PreviousRuns() {
     ring2.register() //loading ring
 
@@ -95,6 +93,8 @@ function PreviousRuns() {
 
     const [ idModelMap, setIdModelMap] = useState(new Map())
 
+    const [shiftHeld, setShiftHeld] = useState(false);
+
 
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
@@ -107,25 +107,44 @@ function PreviousRuns() {
         var newNewArray = [];
         const newArray = filteredPreviousRunCards[0].map((item: { run_ID: string; isSelected: boolean; }) => {
             //color new
+            
             if (item.run_ID === newSelectedId) {
                 item.isSelected = true;
                 return item;
             }
+
+            //edge case for shift click
+            if (leftId != "-1" && rightId == "-1" && shiftHeld && item.run_ID == leftId)
+            {
+                item.isSelected = true;
+                return item;
+
+            }
             //uncolor last if not initial color:
-            if (item.run_ID === leftId) {
+            if (item.run_ID != newSelectedId) {
                 item.isSelected = false;
                 return item;
             }
+
+            
+            
             return item;
         })
         newNewArray.push(newArray);
-        
-        // Update the state with the new array
-        setLeftId(newSelectedId);
-        retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
         setFilteredPreviousRunCards(newNewArray);
-
-        //setStaticLeftLCCDEdata(leftLCCDEdata);
+        
+        if (leftId != "-1" && rightId == "-1" && shiftHeld)
+        {
+            setRightId(newSelectedId)
+            retrieveDataWithId(newSelectedId, false)
+        }
+        else
+        {
+            setLeftId(newSelectedId);
+            setRightId("-1")
+            retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
+        }
+        
     };
 
     // Retrieve all previous runs data
@@ -154,6 +173,28 @@ function PreviousRuns() {
     useEffect(() => {
         handleFilter();
     }, [filterDate, filterID, filterModel, filterF1, previousRunCards])
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if (event.key === 'Shift') {
+            setShiftHeld(true);
+          }
+        };
+    
+        const handleKeyUp = (event: KeyboardEvent) => {
+          if (event.key === 'Shift') {
+            setShiftHeld(false);
+          }
+        };
+    
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+    
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+          document.removeEventListener('keyup', handleKeyUp);
+        };
+      }, []);
 
 
     const fetchData = async () => {
@@ -313,7 +354,7 @@ function PreviousRuns() {
             {
                 
                     let newComponent;
-                    switch(idModelMap.get(leftSide ? leftId : rightId)) {
+                    switch(idModelMap.get(run_id/*leftSide ? leftId : rightId*/)) {
                         case "LCCDE":
                         newComponent = <PageLCCDE
                             key={leftSide ? leftId : rightId}
@@ -427,11 +468,18 @@ function PreviousRuns() {
                             break;
                         default:
                             console.log("error, undetected model name, defaulted switch")
+                            console.log("model type was = " + idModelMap.get(run_id/*leftSide ? leftId : rightId*/))
                             break;
                     }
-
                     
-                    leftSide ? setLeftComponent(newComponent) : setRightComponent(newComponent)
+                    if (leftSide)
+                    {
+                        setLeftComponent(newComponent)
+                    }
+                    else {
+                        setComparisonMode(true)
+                        setRightComponent(newComponent)
+                    }
                 
             }
         }
