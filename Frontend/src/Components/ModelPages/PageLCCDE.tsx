@@ -105,7 +105,7 @@ function PageLCCDE(props : any) {
     return(
         // TODO: change input types (buttons, dropdowns, etc.)
         <div className="modelPage">
-            <h1>RUN LCCDE</h1>
+            <h1>LCCDE</h1>
             <div className="parameters">
                 <label>
                     <span title="The number of decision trees or boosting rounds used in the model. More estimators generally lead to better performance but may increase training time.">
@@ -149,16 +149,19 @@ function PageLCCDE(props : any) {
                 : (<></>)}
             <div className="testSection">
                 {/*show loading spinner if loading */}
-                {isLoading ? (<l-ring-2
+                {isLoading ? (<div style={{paddingTop: "20px"}}> <l-ring-2
                     size="40"
                     stroke="5"
                     stroke-length="0.25"
                     bg-opacity="0.1"
                     speed="0.8" 
                     color="black" 
-                    ></l-ring-2>) 
+                    
+
+                    ></l-ring-2>
+                    </div>) 
                 : (<></>)}
-                {resultData && (
+                {!isLoading && resultData && (
                 <Result 
                     execution_time={resultData.execution_time} 
                     accuracy={resultData.accuracy}
@@ -166,6 +169,7 @@ function PageLCCDE(props : any) {
                     recall={resultData.recall}
                     f1_score={resultData.f1}
                     heatmap={resultData.heatmap} //needs to be converted here to an img
+                    showValidator = {true}
                 />
             )}
             </div>

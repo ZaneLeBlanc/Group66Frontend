@@ -11,8 +11,6 @@ import { ring2 } from 'ldrs'
 import PageTree from './ModelPages/PageTree';
 import PageMTH from './ModelPages/PageMTH';
 
-
-
 function PreviousRuns() {
     ring2.register() //loading ring
 
@@ -95,6 +93,8 @@ function PreviousRuns() {
 
     const [ idModelMap, setIdModelMap] = useState(new Map())
 
+    const [shiftHeld, setShiftHeld] = useState(false);
+
 
     const handleSelection = (newSelectedId: any) => {
         //make the initial text go away
@@ -111,28 +111,44 @@ function PreviousRuns() {
                 item.isSelected = true;
                 return item;
             }
+
+            //edge case for shift click
+            if (leftId != "-1" && rightId == "-1" && shiftHeld && item.run_ID == leftId)
+            {
+                item.isSelected = true;
+                return item;
+
+            }
             //uncolor last if not initial color:
-            if (item.run_ID === leftId) {
+            if (item.run_ID != newSelectedId) {
                 item.isSelected = false;
                 return item;
             }
+
+            
+            
             return item;
         })
         newNewArray.push(newArray);
-        
-        // Update the state with the new array
-        setLeftId(newSelectedId);
-        retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
         setFilteredPreviousRunCards(newNewArray);
-
-        //setStaticLeftLCCDEdata(leftLCCDEdata);
+        
+        if (leftId != "-1" && rightId == "-1" && shiftHeld)
+        {
+            setRightId(newSelectedId)
+            retrieveDataWithId(newSelectedId, false)
+        }
+        else
+        {
+            setLeftId(newSelectedId);
+            setRightId("-1")
+            retrieveDataWithId(newSelectedId, true);//this sets the component on the screen 
+        }
     };
 
     // Retrieve all previous runs data
     useEffect(() => {
       fetchData();
     }, []);
-    
     
     useEffect(() => {
         retrieveDataWithId(rightId, false);
@@ -154,6 +170,28 @@ function PreviousRuns() {
     useEffect(() => {
         handleFilter();
     }, [filterDate, filterID, filterModel, filterF1, previousRunCards])
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if (event.key === 'Shift') {
+            setShiftHeld(true);
+          }
+        };
+    
+        const handleKeyUp = (event: KeyboardEvent) => {
+          if (event.key === 'Shift') {
+            setShiftHeld(false);
+          }
+        };
+    
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+    
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+          document.removeEventListener('keyup', handleKeyUp);
+        };
+      }, []);
 
 
     const fetchData = async () => {
@@ -187,13 +225,9 @@ function PreviousRuns() {
                 arr1.push(arr3[i])
                 tempModelMap.set(arr3[i].id.toString(), "MTH")
             }
-    
-
 
             setRunsData(arr1)
             setIdModelMap(tempModelMap)
-  
-        
 
         //this maps each item in the data array, to be a summary card for the sidebar array. lots of ugly typescript in the top
         let formattedData = data.rows.map((row: { f1: number; id: { toString: () => any; }; run_date: string | number | Date; }) => ({
@@ -207,15 +241,13 @@ function PreviousRuns() {
             //sort the data based on the run_id
         formattedData = formattedData.sort((n1: { run_ID: string; }, n2: { run_ID: string; }) => 
                 (parseInt(n1.run_ID) < parseInt(n2.run_ID)) ? 1 : (parseInt(n1.run_ID) > parseInt(n2.run_ID)) ? -1 : 0)
-
     
-            //array is created, put it in the sidebar varaible array
+        //array is created, put it in the sidebar varaible array
         setPreviousRunCards(formattedData);
             
         var tempArray = [];
         tempArray.push(formattedData);
         setFilteredPreviousRunCards(tempArray);
-
             
         } catch (error) {
           console.error('Error fetching card data:', error);
@@ -234,12 +266,12 @@ function PreviousRuns() {
         }
         else{
             for (var i = 0; i < previousRunCards.length; i++)
+            {
+                if(previousRunCards[i].run_ID == filterID)
                 {
-                    if(previousRunCards[i].run_ID == filterID)
-                    {
-                        newSubArray.push(previousRunCards[i])
-                    }
+                    newSubArray.push(previousRunCards[i])
                 }
+            }
         }
 
         //handle model
@@ -313,7 +345,7 @@ function PreviousRuns() {
             {
                 
                     let newComponent;
-                    switch(idModelMap.get(leftSide ? leftId : rightId)) {
+                    switch(idModelMap.get(run_id/*leftSide ? leftId : rightId*/)) {
                         case "LCCDE":
                         newComponent = <PageLCCDE
                             key={leftSide ? leftId : rightId}
@@ -343,7 +375,8 @@ function PreviousRuns() {
                                 precision: parseFloat(runsData[i].precision).toFixed(5),
                                 recall: parseFloat(runsData[i].recall).toFixed(5),
                                 execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                                heatmap: runsData[i].heatmap
+                                heatmap: runsData[i].heatmap,
+                                showValidator: true
                             }} />
                         break;
 
@@ -388,7 +421,8 @@ function PreviousRuns() {
                                     precision: parseFloat(runsData[i].precision).toFixed(5),
                                     recall: parseFloat(runsData[i].recall).toFixed(5),
                                     execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                                    heatmap: runsData[i].heatmap
+                                    heatmap: runsData[i].heatmap,
+                                    showValidator: false
                                 }} />
 
                             break;
@@ -419,16 +453,24 @@ function PreviousRuns() {
                                 precision: parseFloat(runsData[i].precision).toFixed(5),
                                 recall: parseFloat(runsData[i].recall).toFixed(5),
                                 execution_time: parseFloat(runsData[i].execution_time).toFixed(5),
-                                heatmap: runsData[i].heatmap
+                                heatmap: runsData[i].heatmap,
+                                showValidator: false
                             }} />
                             break;
                         default:
                             console.log("error, undetected model name, defaulted switch")
+                            console.log("model type was = " + idModelMap.get(run_id/*leftSide ? leftId : rightId*/))
                             break;
                     }
-
                     
-                    leftSide ? setLeftComponent(newComponent) : setRightComponent(newComponent)
+                    if (leftSide)
+                    {
+                        setLeftComponent(newComponent)
+                    }
+                    else {
+                        setComparisonMode(true)
+                        setRightComponent(newComponent)
+                    }
                 
             }
         }
@@ -474,7 +516,6 @@ function PreviousRuns() {
 
                 else 
                     setLeftId((largestId+1).toString()) //right called, so change left side
-
 
                 
                 } catch (error) {
@@ -705,7 +746,7 @@ function PreviousRuns() {
                     {parseInt(leftId) > -1 ?
                     (<>
                         {leftComponent}
-                        <button onClick={() => runModifiedAndCompare(true)}>Run</button>
+                        <button className="runButton" onClick={() => runModifiedAndCompare(true)}>Run</button>
                     </>) :
                     (
                         <>
@@ -716,14 +757,14 @@ function PreviousRuns() {
                                     stroke-length="0.25"
                                     bg-opacity="0.1"
                                     speed="0.9" 
-                                    color="white" 
+                                    color="rgb(33, 53, 71)" 
                                     ></l-ring-2>
                             </>
                     )}
                 </div>
                 
             ) : (
-                <h3 style={{ paddingLeft:"500px" }}>Select a record to view details</h3>
+                <h3>(Select a record to view details)</h3>
             )}
 
             {comparisonMode ? //Render new one to the right
@@ -733,7 +774,7 @@ function PreviousRuns() {
                     {parseInt(rightId) > -1 ?
                     (<>
                         {rightComponent}
-                        {rightId != '0' ? (<button onClick={() => runModifiedAndCompare(false)}>Run</button>) : <></>}
+                        {rightId != '0' ? (<button className="runButton" onClick={() => runModifiedAndCompare(false)}>Run</button>) : <></>}
                         
                     </>) : 
                         (
@@ -745,7 +786,7 @@ function PreviousRuns() {
                                     stroke-length="0.25"
                                     bg-opacity="0.1"
                                     speed="0.9" 
-                                    color="white" 
+                                    color="rgb(33, 53, 71)" 
                                     ></l-ring-2>
                             </>
                         )} 

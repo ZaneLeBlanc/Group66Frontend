@@ -57,6 +57,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 0px;
+  box-shadow: 0 -6px 10px 5px rgba(0,0,0,0.5);
+}
+
+.header h1 {
+  margin: 0px;
+  margin-left: 30px;
 }
 
 .items {
@@ -64,7 +71,7 @@ html, body {
 }
 
 .header-link {
-  padding-right: 30px;
+  padding-right: 50px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -73,8 +80,6 @@ html, body {
 
 h1 {
   font-size: 40px;
-  padding-left: 20px;
-  padding-top: 25px; /*I can't tell why it got pushed up, but this pushes it back down 4/11 -Zane */
 }
 
 .runbt {

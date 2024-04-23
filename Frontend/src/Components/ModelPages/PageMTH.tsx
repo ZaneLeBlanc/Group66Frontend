@@ -79,22 +79,8 @@ function PageMTH(props : any) {
     return(
         // TODO: split up params into individual entries (buttons, dropdowns, etc.)
         <div className="modelPage">
-            <h1>RUN MTH</h1>
+            <h1>MTH</h1>
             <div className="parameters">
-                {/*
-                <label>
-                <span title="The number of nodes or machines used in a distributed training setup where the model is trained across multiple systems to speed up the process.">
-                        Clusters: {clusterPrev}
-                    </span>
-                <input type="text" className='paraminput' value={cluster} onChange={(e) => setCluster(e.target.value)} />
-                </label>
-                <label>
-                    <span title="The number of data samples processed in one iteration during the model training process. A larger batch size can speed up training but might require more memory.">
-                        Batch Size: {batchSizePrev}
-                    </span>
-                    <input type="text" className='paraminput' value={batchSize} onChange={(e) => setBatchSize(e.target.value)} />
-                </label>
-                */}
                 <label>
                     <span title="The percentage or fraction of your dataset that is assigned to each cluster or node for distributed training.">
                         Training Allocation: {trainingAllocationPrev}
@@ -121,16 +107,18 @@ function PageMTH(props : any) {
 
             <div className="results">
             {/*show loading spinner if loading */}
-            {isLoading ? (<l-ring-2
-                        size="40"
-                        stroke="5"
-                        stroke-length="0.25"
-                        bg-opacity="0.1"
-                        speed="0.8" 
-                        color="black" 
-                        ></l-ring-2>) 
-                    : (<></>)}
-            {resultData && (
+            {isLoading ? (<div style={{paddingTop: "20px"}}> 
+                            <l-ring-2
+                            size="40"
+                            stroke="5"
+                            stroke-length="0.25"
+                            bg-opacity="0.1"
+                            speed="0.8" 
+                            color="black" 
+                            ></l-ring-2>
+                        </div>) 
+                : (<></>)}
+            {!isLoading && resultData && (
                     <Result 
                         execution_time={resultData.execution_time} 
                         accuracy={resultData.accuracy}
@@ -138,6 +126,7 @@ function PageMTH(props : any) {
                         recall={resultData.recall}
                         f1_score={resultData.f1}
                         heatmap={resultData.heatmap} 
+                        showValidator = {false}
                     />
                 )}
             </div>
