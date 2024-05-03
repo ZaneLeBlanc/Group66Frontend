@@ -21,7 +21,7 @@ In order to run parallel with the back-end, see the [back-end repository](https:
 The front-end repository can be split up into a few components. At the highest level, the front-end is split between the test page, and the previous runs page.
 - Test page: The user can input parameters and run individual models here
 
-- Previous Runs: The user can view runs recorded by the system in the past, and alter parameters to compare how a previous run could have gone differently given alternative parameters.
+- Previous Runs: The user can view runs recorded by the system in the past by clicking a run on the sidebar. From this point, the user can alter parameters to run again and compare how a previous run could have gone differently given alternative parameters. Additionally, 2 runs can be selected and compared by having a run selected and then holding shift while clicking a second run to compare. 
 
 ## Credits
 
