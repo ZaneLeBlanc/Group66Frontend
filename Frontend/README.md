@@ -1,55 +1,27 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
-
 # Group66 Intrusion Detection System (IDS) Using Machine Learning
 ## Project Description
 
-As the Internet becomes more common in daily life, the rise in cyber threats underscores the urgent need for robust defense mechanisms. An Intrusion Detection System (IDS) stands as a pivotal defense tool against cyber attacks. This project aims to augment the provided open-source IDS-ML framework through the development of a user-friendly web-based interface and backend database integration, to allow users to gather analytics on intrusion detection data
-and evaluate algorithm performance.
-
-The quality of a README description often differentiates a good project from a bad project. A good one takes advantage of the opportunity to explain and showcase:
-
-    What your application does,
-    Why you used the technologies you used,
-    Some of the challenges you faced and features you hope to implement in the future.
+As the Internet becomes more common in daily life, the rise in cyber threats underscores the urgent need for robust defense mechanisms. An Intrusion Detection System (IDS) stands as a pivotal defense tool against cyber attacks. This project aims to augment the provided open-source IDS-ML framework through the development of a user-friendly web-based interface and backend database integration, to allow users to gather analytics on intrusion detection data and evaluate algorithm performance.
 
 ## How to Install and Run the Project
 
-Running the ting
+Running the project requires node package manager, python3, React, and vite.
 
-`thing pms`
+[NPM Download Link](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), `npm install vite`,
+`npm install react`
+
+This project uses plenty of other packages panaged by npm or pip. A few include `flask`, `scikit-learn`, and more.
+
+When running with `npm run dev`, npm will return any dependency-based errors.
+
+In order to run parallel with the back-end, see the [back-end repository](https://github.com/ZaneLeBlanc/Group66Backend).
 
 ## How to Use the Project
 
-What all the parts do
+The front-end repository can be split up into a few components. At the highest level, the front-end is split between the test page, and the previous runs page.
+- Test page: The user can input parameters and run individual models here
+
+- Previous Runs: The user can view runs recorded by the system in the past, and alter parameters to compare how a previous run could have gone differently given alternative parameters.
 
 ## Credits
 
@@ -58,10 +30,12 @@ This was a collaborative effort between 5 people for our senior design class at 
 - Zane LeBlanc - History Page Development / Re-Run Comparison Logic
 - Aaron Subichev - Test Page Styling/User Input
 - Imad Siddiqui - User Experience
-- Micaela Landauro - Back-End thing
-- Amy Mendiola - Back-End other thing
+- Micaela Landauro - Back-End
+- Amy Mendiola - Back-End
 - Nhut Nguyen - Faculty Sponsor / Helicopter Parent
 - Rini Patel - Teaching Assistant / Grader
+
+More information can be found about the back-end component with a [link](https://github.com/ZaneLeBlanc/Group66Backend) to the repository here.
 
 ## MIT License
 
